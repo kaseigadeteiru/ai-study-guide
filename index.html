@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生成AI 活用スタートガイド</title>
+<style>
+:root{--navy:#1E3A5F;--navy-l:#D6E4F0;--navy-ll:#EBF5FB;--teal:#0F6E56;--teal-l:#D5F5E3;--slate:#2C5F8A;--slate-l:#D8EAF5;--amber:#854F0B;--amber-l:#FAEEDA;--purple:#3C3489;--purple-l:#EEEDFE;--orange:#922B21;--orange-l:#FDEDEC;--text:#1C2833;--white:#fff;--r:12px;--rs:8px;--sh:0 2px 10px rgba(0,0,0,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f0f4f8;color:var(--text);font-size:15px;line-height:1.7}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:260px;flex-shrink:0;background:var(--navy);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.main{flex:1;min-width:0;padding:32px 40px;max-width:920px}
+/* ── ハンバーガーメニュー（モバイル専用）── */
+.mob-header{display:none}
+.mob-overlay{display:none;position:fixed;inset:0;z-index:200}
+.mob-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.mob-drawer{position:absolute;top:0;left:0;width:min(85vw,320px);height:100%;background:var(--navy);display:flex;flex-direction:column;overflow-y:auto;transform:translateX(-100%);transition:transform .25s ease}
+.mob-overlay.open .mob-drawer{transform:translateX(0)}
+.mob-overlay.open{display:block}
+.mob-drawer-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.15)}
+.mob-drawer-title{font-size:13px;font-weight:700;color:#AED6F1}
+.mob-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
+.mob-nav-list{padding:8px 0;flex:1}
+@media(max-width:768px){
+  .sidebar{display:none}
+  .mob-header{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;background:var(--navy);padding:10px 14px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .mob-menu-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:2px 6px;flex-shrink:0;line-height:1}
+  .mob-chapter-info{flex:1;min-width:0}
+  .mob-chapter-label{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.05em}
+  .mob-chapter-title{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mob-nav-arrows{display:flex;gap:6px;flex-shrink:0}
+  .mob-arrow{background:rgba(255,255,255,.15);border:none;color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+  .mob-arrow:disabled{opacity:.3;cursor:default}
+  .mob-prog{height:3px;background:rgba(255,255,255,.15)}
+  .mob-prog-fill{height:100%;background:var(--teal);transition:width .3s}
+  .layout{flex-direction:column}
+  .main{padding:16px 12px}
+  .sec-header{padding:16px 14px 12px}
+  .sec-title{font-size:16px}
+  .h2{font-size:14px;margin:18px 0 10px}
+  .sec-num{width:40px;height:40px;font-size:15px}
+  .cards{grid-template-columns:1fr}
+  .compare-wrap{grid-template-columns:1fr}
+  .row2{grid-template-columns:1fr}
+  .summary-grid{grid-template-columns:1fr 1fr}
+  .agent-hero-row{flex-direction:column}
+  .tbl{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:12px}
+  .action-step{flex-direction:column;gap:8px}
+  .action-badge{width:fit-content}
+  .prompt-text{font-size:11px}
+  .steps{gap:8px}
+  .step-box{padding:10px 12px;font-size:12px}
+  .priority-item{padding:8px 10px}
+  .callout-head{font-size:13px}
+  .callout-body{font-size:12px}
+  .card h3{font-size:13px}
+  .card p{font-size:11px}
+  .sec-goals-head{font-size:13px}
+  .sec-goal-item{font-size:12px}
+}
+@media(max-width:480px){
+  .main{padding:12px 8px}
+  .summary-grid{grid-template-columns:1fr}
+  .ms-title{font-size:12px}
+  .ms-badge{font-size:10px;padding:2px 6px}
+  .sec-title{font-size:14px}
+  .tbl th,.tbl td{font-size:11px;padding:6px 8px}
+  .prompt-header{flex-wrap:wrap;gap:4px}
+}
+.sidebar-header{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-title{font-size:13px;font-weight:700;color:#AED6F1;letter-spacing:.05em;margin-bottom:4px}
+.sidebar-sub{font-size:11px;color:rgba(255,255,255,.5)}
+.sidebar-nav{padding:12px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;transition:background .15s;border-left:3px solid transparent;color:rgba(255,255,255,.7);font-size:13px}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{background:rgba(255,255,255,.12);color:#fff;border-left-color:#5DCAA5;font-weight:600}
+.nav-badge{width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,255,255,.15);color:#fff}
+.nav-item.active .nav-badge{background:var(--teal)}
+.nav-time{font-size:10px;color:rgba(255,255,255,.4);margin-left:auto;flex-shrink:0}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.prog-label{font-size:11px;color:rgba(255,255,255,.5);margin-bottom:6px}
+.prog-bar{height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--teal);border-radius:2px;transition:width .3s}
+.section{display:none}.section.active{display:block}
+.sec-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid var(--navy-l)}
+.sec-num{width:52px;height:52px;border-radius:50%;background:var(--navy);color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sec-title{font-size:22px;font-weight:700;color:var(--navy);line-height:1.3}
+
+/* ① リード文を「この章で得られること」に変更 → sec-goals */
+.sec-goals{margin-bottom:24px;background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.sec-goals-head{padding:10px 18px;font-size:12px;font-weight:700;color:#fff;background:var(--navy);letter-spacing:.04em}
+.sec-goals-body{padding:12px 18px 14px;display:flex;flex-direction:column;gap:6px}
+.sec-goal-item{display:flex;align-items:flex-start;gap:10px;font-size:14px;line-height:1.6}
+.sec-goal-icon{flex-shrink:0;font-size:14px;margin-top:1px}
+/* 重要章（1章・6章）は強調色 */
+.sec-goals.accent .sec-goals-head{background:linear-gradient(90deg,var(--navy) 0%,var(--teal) 100%)}
+
+.sec-lead{font-size:15px;color:#555;line-height:1.8;margin-bottom:28px;background:var(--navy-ll);padding:16px 20px;border-radius:var(--rs);border-left:4px solid var(--navy)}
+
+.h2{font-size:17px;font-weight:700;color:var(--navy);margin:32px 0 14px;display:flex;align-items:center;gap:8px}
+.h2::before{content:'';display:block;width:4px;height:18px;background:var(--navy);border-radius:2px;flex-shrink:0}
+.callout{border-radius:var(--rs);overflow:hidden;margin:14px 0}
+.callout-head{padding:10px 16px;font-size:13px;font-weight:700;color:#fff}
+.callout-body{padding:14px 16px;font-size:14px;line-height:1.8}
+.callout-body p{margin:3px 0}
+.callout.navy .callout-head{background:var(--navy)}.callout.navy .callout-body{background:var(--navy-ll)}
+.callout.teal .callout-head{background:var(--teal)}.callout.teal .callout-body{background:var(--teal-l)}
+.callout.amber .callout-head{background:var(--amber)}.callout.amber .callout-body{background:var(--amber-l)}
+.callout.orange .callout-head{background:var(--orange)}.callout.orange .callout-body{background:var(--orange-l)}
+.callout.purple .callout-head{background:var(--purple)}.callout.purple .callout-body{background:var(--purple-l)}
+.callout.slate .callout-head{background:var(--slate)}.callout.slate .callout-body{background:var(--slate-l)}
+
+/* ② エージェント章：一言ヒーロー */
+.agent-hero{background:linear-gradient(135deg,#1a3352 0%,#0d5e49 100%);border-radius:var(--r);padding:20px 24px;margin:0 0 20px;color:#fff}
+.agent-hero-row{display:flex;gap:16px;align-items:stretch}
+@media(max-width:600px){.agent-hero-row{flex-direction:column}}
+.agent-hero-col{flex:1;background:rgba(255,255,255,.1);border-radius:var(--rs);padding:14px 16px}
+.agent-hero-col h4{font-size:12px;font-weight:700;opacity:.7;margin-bottom:6px;letter-spacing:.04em}
+.agent-hero-col p{font-size:14px;font-weight:600;line-height:1.5}
+.agent-hero-vs{font-size:20px;font-weight:700;opacity:.4;display:flex;align-items:center;padding:0 4px}
+.agent-hero-label{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:6px;display:inline-block}
+.agent-hero-col.chat .agent-hero-label{background:rgba(255,255,255,.2)}
+.agent-hero-col.agent .agent-hero-label{background:rgba(93,202,165,.35)}
+
+.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin:14px 0;font-size:13px}
+.tbl th{padding:11px 14px;font-weight:700;font-size:12px;text-align:left;background:var(--navy);color:#fff}
+.tbl th.teal{background:var(--teal)}
+.tbl td{padding:10px 14px;border-bottom:1px solid #f0f0f0;vertical-align:top;line-height:1.6}
+.tbl tr:last-child td{border:none}
+.tbl tr:nth-child(even) td{background:#fafafa}
+.tbl .label{font-weight:600;color:var(--navy);font-size:12px;background:#f5f6fa!important;white-space:nowrap}
+.tbl .teal-cell{background:var(--teal-l)!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin:14px 0}
+.card{background:#fff;border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);border-top:3px solid var(--navy)}
+.card.teal{border-top-color:var(--teal)}.card.amber{border-top-color:var(--amber)}.card.purple{border-top-color:var(--purple)}.card.orange{border-top-color:var(--orange)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--navy)}
+.card.teal h3{color:var(--teal)}.card.orange h3{color:var(--orange)}
+.card.navy{border-top-color:var(--navy)}.card.navy h3{color:var(--navy)}
+.card.slate{border-top-color:var(--slate)}.card.slate h3{color:var(--slate)}
+.card.amber h3{color:var(--amber)}
+.card.purple h3{color:var(--purple)}
+.card p{font-size:13px;color:#555;line-height:1.6}
+.card .before{color:var(--orange);font-size:12px;margin-bottom:4px}
+.card .after{color:var(--teal);font-size:12px}
+
+/* Mindset */
+.cat-header{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:var(--rs);margin:28px 0 8px;color:#fff;font-weight:700;font-size:14px}
+.cat-header.A{background:var(--navy)}.cat-header.B{background:var(--teal)}.cat-header.C{background:var(--amber)}.cat-header.D{background:var(--purple)}
+.cat-badge{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0}
+.cat-desc{font-size:13px;color:#666;margin:0 0 12px;padding-left:4px}
+
+/* ① アコーディオン：展開ヒント */
+.ms-hint{font-size:12px;color:var(--teal);margin:-6px 0 10px 4px;display:flex;align-items:center;gap:4px}
+.ms-hint::before{content:"👆";font-size:12px}
+
+.ms-wrap{margin-bottom:10px;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.ms-head{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;background:#fff;cursor:pointer;user-select:none;border-left:4px solid transparent;transition:background .15s}
+.ms-wrap.A .ms-head{border-left-color:var(--navy)}.ms-wrap.B .ms-head{border-left-color:var(--teal)}.ms-wrap.C .ms-head{border-left-color:var(--amber)}.ms-wrap.D .ms-head{border-left-color:var(--purple)}
+.ms-head:hover{background:#f5faff}
+.ms-badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0;margin-top:2px}
+.ms-wrap.A .ms-badge{background:var(--navy-ll);color:var(--navy)}.ms-wrap.B .ms-badge{background:var(--teal-l);color:var(--teal)}.ms-wrap.C .ms-badge{background:var(--amber-l);color:var(--amber)}.ms-wrap.D .ms-badge{background:var(--purple-l);color:var(--purple)}
+.ms-content{flex:1}
+.ms-title{font-size:14px;font-weight:700;margin-bottom:2px}
+.ms-point{font-size:12px;color:#777;line-height:1.5}
+.ms-toggle{font-size:13px;color:#999;flex-shrink:0;margin-top:4px;transition:transform .2s;background:var(--navy-ll);color:var(--navy);padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap}
+.ms-wrap.open .ms-toggle{transform:rotate(180deg);background:var(--teal-l);color:var(--teal)}
+.ms-points{display:none;padding:8px 16px 12px;background:#fdfdfd;border-top:1px solid #f0f0f0}
+.ms-wrap.open .ms-points{display:block}
+.ms-pi{font-size:13px;padding:4px 0;border-bottom:1px solid #f5f5f5;display:flex;gap:6px;color:#444}
+.ms-pi:last-child{border:none}
+.ms-pi::before{content:"◆";font-size:9px;margin-top:5px;flex-shrink:0;opacity:.4}
+.ms-case{display:none;border-top:1px dashed #ddd}
+.ms-wrap.A .ms-case{background:#f4f8fc}.ms-wrap.B .ms-case{background:#f0faf7}.ms-wrap.C .ms-case{background:#fdf8f0}.ms-wrap.D .ms-case{background:#f5f4fe}
+.ms-wrap.open .ms-case{display:block}
+.ms-ci{padding:14px 16px}
+.case-tag{font-size:10px;font-weight:700;letter-spacing:.05em;opacity:.55;margin-bottom:8px}
+.case-scene{font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;display:inline-block;margin-bottom:10px}
+.ms-wrap.A .case-scene{background:var(--navy-ll);color:var(--navy)}.ms-wrap.B .case-scene{background:var(--teal-l);color:var(--teal)}.ms-wrap.C .case-scene{background:var(--amber-l);color:var(--amber)}.ms-wrap.D .case-scene{background:var(--purple-l);color:var(--purple)}
+.case-b,.case-a{display:flex;gap:8px;padding:9px 12px;border-radius:var(--rs);font-size:13px;line-height:1.6;margin-bottom:6px}
+.case-b{background:rgba(146,43,33,.05)}.case-a{background:rgba(15,110,86,.06);margin-bottom:0}
+.case-b b{color:var(--orange)}.case-a b{color:var(--teal)}
+.ci{flex-shrink:0;margin-top:1px}
+
+.flow{display:flex;flex-direction:column;gap:4px;margin:14px 0}
+.flow-step{display:flex;align-items:flex-start;gap:12px;background:#fff;border-radius:var(--rs);padding:12px 16px;box-shadow:var(--sh)}
+.flow-num{width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.flow-step.teal .flow-num{background:var(--teal)}
+.flow-text strong{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.flow-step.teal .flow-text strong{color:var(--teal)}
+.flow-text span{font-size:12px;color:#666}
+.flow-arrow{text-align:center;color:#bbb;font-size:16px;line-height:1}
+
+/* ④ プロンプトボックス with コピーボタン */
+.prompt{background:#f8f9fa;border:1px solid #e0e0e0;border-radius:var(--rs);margin:12px 0;overflow:hidden}
+.prompt-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 0}
+.prompt-label{font-size:12px;font-weight:700;color:var(--teal)}
+.copy-btn{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid var(--teal);color:var(--teal);background:#fff;cursor:pointer;transition:all .15s;flex-shrink:0}
+.copy-btn:hover{background:var(--teal);color:#fff}
+.copy-btn.copied{background:var(--teal);color:#fff;border-color:var(--teal)}
+.prompt-text{font-family:'Courier New',monospace;font-size:12px;color:#333;line-height:1.7;white-space:pre-wrap;padding:10px 16px 14px}
+
+.compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+@media(max-width:600px){.compare-wrap{grid-template-columns:1fr}}
+.compare-col{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.compare-col-head{padding:12px 16px}
+.compare-col-head .badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:6px;display:inline-block}
+.compare-col-head h3{font-size:15px;font-weight:700}
+.compare-col-head p{font-size:11px;opacity:.75;margin-top:2px}
+.compare-col.chat .compare-col-head{background:var(--navy-ll)}.compare-col.chat .badge{background:var(--navy);color:#fff}.compare-col.chat h3{color:var(--navy)}
+.compare-col.agent .compare-col-head{background:var(--teal-l)}.compare-col.agent .badge{background:var(--teal);color:#fff}.compare-col.agent h3{color:var(--teal)}
+.compare-col-body{background:#fff;padding:14px 16px}
+.feat-list{list-style:none}
+.feat-list li{font-size:13px;padding:6px 0;border-bottom:1px solid #f5f5f5;display:flex;gap:8px}
+.feat-list li:last-child{border:none}
+.tag-area{border-radius:var(--rs);padding:10px 14px;margin-top:10px}
+.compare-col.chat .tag-area{background:var(--navy-ll)}.compare-col.agent .tag-area{background:var(--teal-l)}
+.tag-area-label{font-size:10px;font-weight:700;margin-bottom:6px;opacity:.7}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600}
+.compare-col.chat .tag{background:var(--navy);color:#fff}.compare-col.agent .tag{background:var(--teal);color:#fff}
+
+.priority,.steps{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.priority-item,.step-box{display:flex;align-items:flex-start;gap:12px;background:#fff;border-radius:var(--rs);padding:12px 16px;box-shadow:var(--sh)}
+.priority-num,.step-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0;margin-top:2px;white-space:nowrap}
+.p1 .priority-num{background:var(--navy);color:#fff}.p2 .priority-num{background:var(--teal);color:#fff}.p3 .priority-num{background:var(--amber);color:#fff}
+.s1 .step-badge{background:var(--navy);color:#fff}.s2 .step-badge{background:var(--teal);color:#fff}.s3 .step-badge{background:var(--purple);color:#fff}
+.priority-body strong,.step-box strong{display:block;font-size:13px;font-weight:700;margin-bottom:2px}
+.priority-body span,.step-box span{font-size:12px;color:#666}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.row2{grid-template-columns:1fr}}
+
+/* ⑥ 機密情報リスト：具体的な行に */
+.risk-list{list-style:none;margin:6px 0}
+.risk-list li{font-size:13px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06);display:flex;gap:8px;line-height:1.5}
+.risk-list li:last-child{border:none}
+.risk-list .ri{flex-shrink:0;font-size:13px}
+
+/* ⑤ アクションプラン：詳細付き */
+.action-steps{display:flex;flex-direction:column;gap:10px;margin:14px 0}
+.action-step{display:flex;align-items:flex-start;gap:14px;background:#fff;border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh)}
+.action-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0;margin-top:2px}
+.as1 .action-badge{background:var(--navy);color:#fff}.as2 .action-badge{background:var(--teal);color:#fff}.as3 .action-badge{background:var(--amber);color:#fff}.as4 .action-badge{background:var(--purple);color:#fff}
+.action-content strong{display:block;font-size:13px;font-weight:700;margin-bottom:4px}
+.action-detail{font-size:12px;color:#666;background:#f8f9fa;border-radius:var(--rs);padding:7px 10px;line-height:1.6;border-left:3px solid #ddd}
+.as1 .action-detail{border-left-color:var(--navy-l)}.as2 .action-detail{border-left-color:var(--teal-l)}.as3 .action-detail{border-left-color:var(--amber-l)}.as4 .action-detail{border-left-color:var(--purple-l)}
+
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:14px 0}
+.summary-card{background:var(--navy);color:#fff;border-radius:var(--r);padding:16px 18px}
+.summary-card .num{font-size:28px;font-weight:700;opacity:.4;line-height:1;margin-bottom:4px}
+.summary-card .lbl{font-size:11px;opacity:.7;margin-bottom:6px}
+.summary-card .txt{font-size:13px;line-height:1.5}
+.closing{background:linear-gradient(135deg,var(--navy) 0%,var(--teal) 100%);border-radius:var(--r);padding:32px;text-align:center;color:#fff;margin-top:24px}
+.closing h2{font-size:20px;margin-bottom:12px}
+.closing p{font-size:14px;opacity:.85;line-height:1.8}
+.nav-btns{display:flex;justify-content:space-between;margin-top:40px;padding-top:24px;border-top:2px solid var(--navy-l)}
+.btn{padding:10px 24px;border-radius:var(--rs);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:#16304f}
+.btn-secondary{background:var(--navy-l);color:var(--navy)}.btn-secondary:hover{background:#c2d8ed}
+.btn:disabled{opacity:.3;cursor:default}
+.chip{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;margin:2px}
+.chip-navy{background:var(--navy-ll);color:var(--navy)}.chip-teal{background:var(--teal-l);color:var(--teal)}
+.mt{margin-top:20px}
+</style>
+</head>
+<body>
+<!-- モバイルヘッダー -->
+<div class="mob-header" id="mob-header">
+  <button class="mob-menu-btn" onclick="toggleDrawer()" aria-label="メニューを開く">☰</button>
+  <div class="mob-chapter-info">
+    <div class="mob-chapter-label">CHAPTER</div>
+    <div class="mob-chapter-title" id="mob-title">序章 ─ 生成AIとは何か？</div>
+  </div>
+  <div class="mob-nav-arrows">
+    <button class="mob-arrow" id="mob-prev" onclick="go(cur-1)" disabled>‹</button>
+    <button class="mob-arrow" id="mob-next" onclick="go(cur+1)">›</button>
+  </div>
+</div>
+<div class="mob-prog"><div class="mob-prog-fill" id="mob-prog-fill" style="width:7%"></div></div>
+
+<!-- ドロワーオーバーレイ -->
+<div class="mob-overlay" id="mob-overlay">
+  <div class="mob-backdrop" onclick="closeDrawer()"></div>
+  <nav class="mob-drawer">
+    <div class="mob-drawer-header">
+      <span class="mob-drawer-title">もくじ</span>
+      <button class="mob-close" onclick="closeDrawer()">✕</button>
+    </div>
+    <div class="mob-nav-list">
+    <div class="nav-item" onclick="goMob(0)"><span class="nav-badge">序</span>生成AIとは何か<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="goMob(1)"><span class="nav-badge">1</span>指示の出し方<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="goMob(2)"><span class="nav-badge">2</span>実務の活用イメージ<span class="nav-time">20分</span></div>
+    <div class="nav-item" onclick="goMob(3)"><span class="nav-badge">3</span>役割分担<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="goMob(4)"><span class="nav-badge">4</span>マインドセット<span class="nav-time">25分</span></div>
+    <div class="nav-item" onclick="goMob(5)"><span class="nav-badge">5</span>3つの約束<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="goMob(6)"><span class="nav-badge">6</span>ツール紹介<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="goMob(7)"><span class="nav-badge">7</span>環境設計の全体像<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="goMob(8)"><span class="nav-badge">8</span>①ハードウェア<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="goMob(9)"><span class="nav-badge">9</span>②録音・文字起こし<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="goMob(10)"><span class="nav-badge">10</span>③コンテキスト収集<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="goMob(11)"><span class="nav-badge">11</span>④知識管理・AI連携<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="goMob(12)"><span class="nav-badge">12</span>エージェント型AI<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="goMob(13)"><span class="nav-badge">13</span>この資料のつくり方<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="goMob(14)"><span class="nav-badge">✓</span>まとめ<span class="nav-time">5分</span></div>
+    </div>
+  </nav>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-title">生成AI 活用スタートガイド</div>
+    <div class="sidebar-sub">はじめての実務活用 勉強会</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" onclick="go(0)"><span class="nav-badge">序</span>生成AIとは何か<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="go(1)"><span class="nav-badge">1</span>指示の出し方<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="go(2)"><span class="nav-badge">2</span>実務の活用イメージ<span class="nav-time">20分</span></div>
+    <div class="nav-item" onclick="go(3)"><span class="nav-badge">3</span>役割分担<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="go(4)"><span class="nav-badge">4</span>マインドセット<span class="nav-time">25分</span></div>
+    <div class="nav-item" onclick="go(5)"><span class="nav-badge">5</span>3つの約束<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="go(6)"><span class="nav-badge">6</span>ツール紹介<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="go(7)"><span class="nav-badge">7</span>環境設計の全体像<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="go(8)"><span class="nav-badge">8</span>①ハードウェア<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="go(9)"><span class="nav-badge">9</span>②録音・文字起こし<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="go(10)"><span class="nav-badge">10</span>③コンテキスト収集<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="go(11)"><span class="nav-badge">11</span>④知識管理・AI連携<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="go(12)"><span class="nav-badge">12</span>エージェント型AI<span class="nav-time">15分</span></div>
+    <div class="nav-item" onclick="go(13)"><span class="nav-badge">13</span>この資料のつくり方<span class="nav-time">10分</span></div>
+    <div class="nav-item" onclick="go(14)"><span class="nav-badge">✓</span>まとめ<span class="nav-time">5分</span></div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="prog-label">進行状況 <span id="prog-text">1 / 9</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:11%"></div></div>
+    <div style="margin-top:12px;font-size:10px;color:rgba(255,255,255,.35);text-align:center">&copy; 今井峻介</div>
+  </div>
+</nav>
+<main class="main">
+
+<!-- 序章 -->
+<div class="section active" id="sec-0">
+  <div class="sec-header"><div class="sec-num">序</div><div class="sec-title">生成AIとは何か？ ─ 仕組みと概要</div></div>
+<!-- ③ この章で得られること -->
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「生成AI」が従来のAIと何が違うのか、ひとことで説明できる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「超博識な新人」のたとえでAIの得意・不得意が整理できる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>ChatGPT・Claude・Gemini・Copilotの使い分けが分かる</div>
+    </div>
+  </div>
+  <div class="h2">① 従来のAIとの違い</div>
+  <table class="tbl"><tr><th></th><th>従来のAI（これまで）</th><th class="teal">生成AI（これから）</th></tr><tr><td class="label">できること</td><td>あらかじめ決められた範囲で判断する</td><td class="teal-cell">「新しいもの」を自ら生成・創造できる</td></tr><tr><td class="label">例</td><td>迷惑メール判定、製品の欠陥検査</td><td class="teal-cell">文章・画像・音声・コードの生成</td></tr></table>
+  <div class="h2">② 仕組みをざっくり理解 ─「超博識な新人」のイメージ</div>
+  <div class="callout navy"><div class="callout-head">📚 大量の「読書」で学習する大規模言語モデル（LLM）</div><div class="callout-body"><p>生成AIの核心は「大規模言語モデル（LLM）」という技術です。インターネット上の膨大なテキストを読み込み、「次にどんな言葉が来るか」を予測し続けることで、人間のように自然な文章を生成できるようになりました。</p><p style="margin-top:10px"><strong>💡 例えるなら：</strong>人類が書いてきたあらゆる文章を全部読んだ「超博識な新人」。ただし読んだだけで「体験」はしていないので、最新情報や感情の機微は苦手なことがあります。</p></div></div>
+  <div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 20px"><svg width="100%" viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="0" y="0" width="680" height="200" fill="#EBF5FB"/>
+<text x="340" y="18" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1E3A5F" opacity="0.7">LLM（大規模言語モデル）の仕組み</text>
+<rect x="30" y="36" width="130" height="126" rx="10" fill="#1E3A5F" opacity="0.9"/>
+<text x="95" y="86" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="28" fill="#5DCAA5">📚</text>
+<text x="95" y="112" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">大量のテキストを</text>
+<text x="95" y="130" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">学習</text>
+<text x="95" y="152" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#AED6F1">書籍・ウェブ・論文…</text>
+<line x1="160" y1="99" x2="200" y2="99" stroke="#1E3A5F" stroke-width="1.5" marker-end="url(#a2)"/>
+<rect x="200" y="36" width="130" height="126" rx="10" fill="#0F6E56" opacity="0.9"/>
+<text x="265" y="86" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="28" fill="#D5F5E3">🧠</text>
+<text x="265" y="112" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">LLM</text>
+<text x="265" y="130" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">大規模言語モデル</text>
+<text x="265" y="152" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#9FE1CB">次の言葉を予測し続ける</text>
+<line x1="330" y1="99" x2="370" y2="99" stroke="#1E3A5F" stroke-width="1.5" marker-end="url(#a2)"/>
+<rect x="370" y="36" width="130" height="126" rx="10" fill="#3C3489" opacity="0.9"/>
+<text x="435" y="86" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="28" fill="#EEEDFE">💬</text>
+<text x="435" y="112" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">あなたの指示</text>
+<text x="435" y="130" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">（プロンプト）</text>
+<text x="435" y="152" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#C8C5EE">背景・目的・条件</text>
+<line x1="500" y1="99" x2="540" y2="99" stroke="#1E3A5F" stroke-width="1.5" marker-end="url(#a2)"/>
+<rect x="540" y="36" width="120" height="126" rx="10" fill="#854F0B" opacity="0.9"/>
+<text x="600" y="86" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="28" fill="#FAEEDA">✨</text>
+<text x="600" y="112" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">文章・アイデア</text>
+<text x="600" y="130" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">・コードを生成</text>
+<text x="600" y="152" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#FAC775">指示の質＝出力の質</text>
+</svg></div>
+<div class="callout amber" style="margin-top:12px"><div class="callout-head">⚠️ 生成AIが苦手なこと（特性の理解）</div><div class="callout-body"><p>・学習データの締切以降の最新情報は知らない（知識のカットオフ）</p><p>・数字・固有名詞・法律などの正確性が低いことがある（ハルシネーション）</p><p>・感情や空気感、文化的背景の読み取りが難しい場面がある</p></div></div>
+  <div class="h2">③ 代表的な生成AIツール</div>
+  <table class="tbl"><tr><th>ツール名</th><th>開発元</th><th>特徴・得意なこと</th></tr><tr><td><strong>ChatGPT</strong></td><td>OpenAI</td><td>汎用性が高い。最も普及しており情報も豊富</td></tr><tr><td><strong>Claude</strong></td><td>Anthropic</td><td>長文処理・文書要約が得意。安全性重視</td></tr><tr><td><strong>Gemini</strong></td><td>Google</td><td>Google検索と連携。最新情報の収集に強い</td></tr><tr><td><strong>Copilot</strong></td><td>Microsoft</td><td>Word/Excel/Outlookと統合。Officeユーザーに便利</td></tr></table>
+
+  <div class="h2">⚡ なぜ「今」学ぶことが重要なのか</div>
+  <div class="callout orange">
+    <div class="callout-head">🚨 今の価格は「異常状態」─ AI格差前夜が来るかもしれない</div>
+    <div class="callout-body">
+      <p>Claude・ChatGPTのような超高性能AIが月額数千円で使える現状は、<strong>原価と提供価格が整合していない異常状態</strong>である、という指摘があります。</p>
+      <p style="margin-top:8px">フロンティアAI（数兆パラメータ規模）を動かすには、1台5億円級のモンスターサーバーが複数必要。その巨大インフラを月額数千円で「元を取る」のは構造的に不可能に近い。</p>
+      <p style="margin-top:8px">苛烈なAI競争が収束したとき、価格は「正常化」される可能性が高い。その先には、超大企業だけが最高AIを使いこなし、個人や中小組織は制限されたプランしか使えない<strong>「AI格差」</strong>が生まれるかもしれない。</p>
+    </div>
+  </div>
+
+  <div class="row2" style="margin:14px 0">
+    <div class="callout navy" style="margin:0">
+      <div class="callout-head">📉 数年後には変わっているかもしれないこと</div>
+      <div class="callout-body">
+        <p>・月額数千円で最高クラスのAIを使えること</p>
+        <p>・大企業も個人も「同じAI」にアクセスできること</p>
+        <p>・高度なAI機能が「誰でも無料で試せる」こと</p>
+      </div>
+    </div>
+    <div class="callout teal" style="margin:0">
+      <div class="callout-head">✅ 不可逆的に続くこと</div>
+      <div class="callout-body">
+        <p>・AIそのものが消えてなくなる日は来ない</p>
+        <p>・オープンモデルの民主化・低価格化は進む</p>
+        <p>・AIを使いこなした人・組織の優位は拡大する</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout teal">
+    <div class="callout-head">💡 ソーシャルセクターにとっての意味</div>
+    <div class="callout-body">
+      <p>大企業・行政が最高AIを経営判断・戦略立案に本格活用し始める前に、NPOや中小組織がAIリテラシーを身につけておくことが、今後の情報格差・支援格差に直結するかもしれない。</p>
+      <p style="margin-top:8px"><strong>「この異常に面白い時代を楽しめるのは今だけ」</strong>という言葉がある。今がまさにその「今」だ。</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- 第1章：AIへの指示の出し方 -->
+<div class="section" id="sec-1">
+  <div class="sec-header"><div class="sec-num">1</div><div class="sec-title">AIへの上手な指示の出し方 ─ 部下に的確な指示を出すコツ</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「的外れな回答」をなくす4つの指示のコツが身につく</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>明日からコピペで使える「最強の指示書テンプレート」が手に入る</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>一度で完璧を求めず「対話」で磨くスタンスが確立できる</div>
+    </div>
+  </div>
+
+  <div class="callout navy">
+    <div class="callout-head">💡 note・Xで話題の「魔法の呪文」の正体</div>
+    <div class="callout-body">
+      <p>SNSで「プロンプト（AIへの指示文）」が話題になるとき、実は言っていることはシンプルです。</p>
+      <p style="margin-top:8px"><strong>「優秀な部下に、的確な指示を出すコツ」と全く同じ。</strong></p>
+      <p style="margin-top:6px">専門用語に身構えず、「話しやすい後輩とチャットする感覚」でこの4つのコツを試してみてください。</p>
+    </div>
+  </div>
+
+  <!-- コツ全体像SVG -->
+  <div class="h2">🗺️ 4つのコツの全体像</div>
+  <div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 24px">
+  <svg width="100%" viewBox="0 0 680 316" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="680" height="316" fill="#EBF5FB"/>
+  <text x="340" y="22" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">AIへの指示 ─ 4つのコツ</text>
+
+  <!-- コツ①：左上 w=310 h=130 -->
+  <rect x="20" y="34" width="310" height="130" rx="10" fill="#fff" stroke="#1E3A5F" stroke-width="1.5"/>
+  <rect x="20" y="34" width="310" height="36" rx="10" fill="#1E3A5F"/>
+  <rect x="20" y="56" width="310" height="14" fill="#1E3A5F"/>
+  <text x="175" y="59" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">コツ① 役割を与える（ロール設定）</text>
+  <text x="36" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🎭</text>
+  <text x="62" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#1E3A5F">「何者か」を定義する</text>
+  <text x="36" y="114" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">「あなたはプロの広報担当です」と一言添えるだけで</text>
+  <text x="36" y="130" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">専門家の視点と言葉遣いで答えてくれるようになる</text>
+  <text x="36" y="152" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#1E3A5F" font-weight="700">→ 例：「広報担当」「営業部長」「ベテラン編集者」</text>
+
+  <!-- コツ②：右上 -->
+  <rect x="350" y="34" width="310" height="130" rx="10" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/>
+  <rect x="350" y="34" width="310" height="36" rx="10" fill="#0F6E56"/>
+  <rect x="350" y="56" width="310" height="14" fill="#0F6E56"/>
+  <text x="505" y="59" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">コツ② 背景と目的（コンテキスト）</text>
+  <text x="366" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">📋</text>
+  <text x="392" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#085041">なぜ・誰に・何のためをセットで</text>
+  <text x="366" y="114" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">「メールを書いて」ではなく「誰に・なぜ・</text>
+  <text x="366" y="130" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">どんなトーンで」まで伝えると質が別物になる</text>
+  <text x="366" y="152" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#0F6E56" font-weight="700">→ 例：【背景】【目的】【相手】の3点セット</text>
+
+  <!-- コツ③：左下 -->
+  <rect x="20" y="182" width="310" height="130" rx="10" fill="#fff" stroke="#854F0B" stroke-width="1.5"/>
+  <rect x="20" y="182" width="310" height="36" rx="10" fill="#854F0B"/>
+  <rect x="20" y="202" width="310" height="16" fill="#854F0B"/>
+  <text x="175" y="205" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">コツ③ 出力形式を指定（フォーマット）</text>
+  <text x="36" y="240" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">📐</text>
+  <text x="62" y="244" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#633806">形・量・難易度を先に指定する</text>
+  <text x="36" y="262" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">「300字以内で」「箇条書き5点」「表形式で」</text>
+  <text x="36" y="278" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">「中学生でもわかる言葉で」が特に効果的</text>
+  <text x="36" y="300" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#854F0B" font-weight="700">→ 自分で後から整理する手間が省ける</text>
+
+  <!-- コツ④：右下（★最重要） -->
+  <rect x="350" y="182" width="310" height="130" rx="10" fill="#fff" stroke="#3C3489" stroke-width="2"/>
+  <rect x="350" y="182" width="310" height="36" rx="10" fill="#3C3489"/>
+  <rect x="350" y="202" width="310" height="16" fill="#3C3489"/>
+  <text x="505" y="205" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">コツ④ 逆質問させる ★最重要</text>
+  <text x="366" y="240" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🔄</text>
+  <text x="392" y="244" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#3C3489">AIに足りない情報を聞かせる</text>
+  <text x="366" y="262" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">「情報が不足していれば質問してください」と</text>
+  <text x="366" y="278" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">付け加えるだけで精度が格段に上がる</text>
+  <text x="366" y="300" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#3C3489" font-weight="700">→ AIが自分で「抜け」を発見してくれる</text>
+</svg>
+  </div>
+
+  <!-- コツ1 -->
+  <div class="h2">コツ① 「何者か」を定義する ─ 役割を与える</div>
+  <div class="callout navy">
+    <div class="callout-head">🎭 「あなたはプロの○○です」の一言が全てを変える</div>
+    <div class="callout-body">
+      <p>AIに「誰になりきってほしいか」を伝えます。プロンプトの世界では<strong>「ロール（役割）設定」</strong>と呼ばれるテクニックです。</p>
+      <p style="margin-top:10px"><strong>例：</strong>「あなたはプロの広報担当です」「あなたはベテランの営業部長です」</p>
+      <p style="margin-top:8px">→ AIがその道の専門家として、ふさわしい言葉遣いや視点を選んでくれるようになります。</p>
+    </div>
+  </div>
+  <div class="row2" style="margin:12px 0">
+    <div class="callout orange" style="margin:0">
+      <div class="callout-head">❌ 役割なし</div>
+      <div class="callout-body">
+        <p>「助成金の申請書を書いて」</p>
+        <p style="margin-top:6px;font-size:12px;color:#888">→ 一般的な文章しか出てこない</p>
+      </div>
+    </div>
+    <div class="callout teal" style="margin:0">
+      <div class="callout-head">✅ 役割あり</div>
+      <div class="callout-body">
+        <p>「<strong>あなたはNPOの助成金申請のプロです。</strong>以下の活動内容をもとに申請書を書いて」</p>
+        <p style="margin-top:6px;font-size:12px;color:#888">→ 審査員目線の言葉と構成で書かれる</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- コツ2 -->
+  <div class="h2">コツ② 「背景」と「目的」をセットで伝える</div>
+  <div class="callout teal">
+    <div class="callout-head">📋「これやって」だけでなく「なぜやるのか・誰に見せるのか」を教える</div>
+    <div class="callout-body">
+      <p><strong>「誰が・誰に・何のために」</strong>を箇条書きで入れるだけで、文章の質が別物になります。</p>
+    </div>
+  </div>
+  <table class="tbl" style="margin-top:12px">
+    <tr><th style="width:10%"></th><th>指示の例</th><th>結果</th></tr>
+    <tr>
+      <td class="label" style="color:var(--orange)">❌ 悪い例</td>
+      <td>「お礼メールを書いて」</td>
+      <td>誰に・なぜ・どんなトーンか不明で的外れな文章になる</td>
+    </tr>
+    <tr>
+      <td class="label" style="color:var(--teal)">✅ 良い例</td>
+      <td>「【背景】30年来の取引先との会食が終わりました。<br>【目的】感謝を伝えつつ、次回の商談に繋げたい。<br>【相手】保守的な性格の社長です」</td>
+      <td>相手・目的・トーンが揃い、そのまま使える文章が出てくる</td>
+    </tr>
+  </table>
+
+  <!-- コツ3 -->
+  <div class="h2">コツ③ 「出力形式」を指定する ─ お化粧を指定する</div>
+  <div class="callout amber">
+    <div class="callout-head">📐 「どんな形で答えがほしいか」を具体的に指示する</div>
+    <div class="callout-body">
+      <p>形や制限を伝えるだけで、自分で後から整理する手間が省けます。</p>
+      <p style="margin-top:10px">
+        <strong>よく使う形式指定：</strong>「300文字以内で」「箇条書きで5点」「表形式で」「中学生でもわかる言葉で」「見出しをつけて」「結論から先に」
+      </p>
+    </div>
+  </div>
+  <div class="prompt" style="margin-top:12px">
+    <div class="prompt-header"><span class="prompt-label">💬 出力形式を指定した指示の例</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">以下の会議メモを整理してください。
+出力形式：箇条書き、3つのカテゴリー（決定事項・次回アクション・懸念点）に分けて、各5行以内で。
+対象読者：この会議に出席していなかった理事向けに、中学生でもわかる言葉で。
+
+[ここに会議メモを貼り付け]</div>
+  </div>
+
+  <!-- コツ4 -->
+  <div class="h2">コツ④ 「一気にやらせない」 ─ 逆質問のススメ（最重要）</div>
+  <div class="callout purple">
+    <div class="callout-head">🔄 note・Xで最も推奨されているテクニック ─ AIに「質問させる」</div>
+    <div class="callout-body">
+      <p>指示の最後に<strong>「指示に足りない情報があれば、私に質問してください」</strong>と付け加えます。</p>
+      <p style="margin-top:8px">→ AIが「この情報が足りないな」と自分で気づき、こちらから情報を引き出してくれます。やりとりを重ねることで精度が格段に上がります。</p>
+      <p style="margin-top:8px"><strong>なぜ最重要か：</strong>あなたが気づいていない「抜け」をAIが発見してくれるからです。</p>
+    </div>
+  </div>
+
+  <!-- テンプレート -->
+  <div class="h2">📋 明日からコピペで使える「最強の指示書」テンプレート</div>
+  <p style="font-size:13px;color:#666;margin:-8px 0 12px">4つのコツをすべて組み合わせた完成形です。〇〇を自分の状況に置き換えて使ってください。</p>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 最強の指示書テンプレート（4コツ全部入り）</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">【役割】
+あなたは優秀な事務局長です。
+
+【依頼内容】
+来月の社内研修の案内文を作成してください。
+
+【背景】
+若手社員のデジタルリテラシー向上を目的とした研修です。
+
+【条件】
+・親しみやすいが、締まりのあるトーンで
+・1分で読める長さで
+・最後に「申し込みフォームはこちら」という一文を入れて
+
+【お願い】
+もし、より良い案内文を作るために必要な情報が不足していれば、
+書き始める前に私に質問してください。</div>
+  </div>
+
+  <!-- 対話で磨く -->
+  <div class="h2">💬 一度で成功させようとしない ─ 対話で答えを削り出す</div>
+  <div class="callout teal">
+    <div class="callout-head">note・X のプロたちも、実は一度で完璧な答えは出していない</div>
+    <div class="callout-body">
+      <p>最初の回答が60点でも、対話を重ねて100点に仕上げるのが今のAI活用のスタンダードです。</p>
+    </div>
+  </div>
+  <div class="steps" style="margin-top:14px">
+    <div class="step-box s1">
+      <span class="step-badge">対話①</span>
+      <div>
+        <strong>「もっと短くして」</strong>
+        <span>長すぎた文章をコンパクトに絞り込む</span>
+      </div>
+    </div>
+    <div class="step-box s2">
+      <span class="step-badge">対話②</span>
+      <div>
+        <strong>「さっきの案の、3番目だけ深掘りして」</strong>
+        <span>気に入った部分だけを発展させる</span>
+      </div>
+    </div>
+    <div class="step-box s3">
+      <span class="step-badge">対話③</span>
+      <div>
+        <strong>「上司に怒られないように、もう少し謙虚な表現に変えて」</strong>
+        <span>トーンや言葉を微調整して完成させる</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 追加プロンプト -->
+  <div class="h2">📝 そのまま使えるプロンプト（役割×背景×形式 セット）</div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 NPO向け：寄付募集文の作成</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">【役割】あなたはNPOのファンドレイジング（寄付募集）の専門家です。
+【背景】私たちは子どもの学習支援をしているNPOで、年末の寄付キャンペーンを準備中です。
+【対象読者】30〜50代の地域住民で、社会貢献に関心があります。
+【依頼】寄付を促す文章を作ってください。
+【条件】200字以内、温かみのあるトーンで、具体的な支援の効果を1つ入れて。
+【お願い】情報が足りなければ、書き始める前に質問してください。</div>
+  </div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 書店向け：フェアの棚POPコピー</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">【役割】あなたは書店のベテランPOP制作者です。
+【背景】秋の読書フェアで「仕事に役立つ本」コーナーを作ります。
+【対象読者】仕事帰りに立ち寄る30〜40代のビジネスパーソン。
+【依頼】思わず手に取りたくなる棚POPのキャッチコピーを5案作ってください。
+【条件】各20字以内、行動を促す言葉で終わること。</div>
+  </div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 クリエイティブ向け：提案書のオープニング</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">【役割】あなたは経験豊富なデザイナーです。
+【背景】新規クライアント（カフェオーナー）へのロゴデザイン提案書を作っています。
+【目的】初回の打ち合わせで信頼を得て、受注につなげたい。
+【依頼】提案書の冒頭（オープニング文）を書いてください。
+【条件】150字以内、温かみとプロフェッショナルさを両立したトーンで。
+【お願い】情報が不足していれば質問してください。</div>
+  </div>
+
+</div>
+
+
+
+<!-- 第2章：実務での活用イメージ -->
+<div class="section" id="sec-2">
+  <div class="sec-header"><div class="sec-num">2</div><div class="sec-title">実務での活用イメージ ─ まず使ってみよう</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>仕事のフェーズ（前・前半・後半）に応じた具体的な頼み方が分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「何をAIに頼めばいいか分からない」という迷いがなくなる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>明日から試せる具体的な使用シーン事例が手に入る</div>
+    </div>
+  </div>
+
+  <!-- 全体像SVG -->
+  <div class="h2">🗺️ 業務プロセスとAI活用の全体像</div>
+  <div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 24px">
+  <svg width="100%" viewBox="0 0 680 228" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="680" height="228" fill="#f8f9fa"/>
+  <text x="340" y="20" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">仕事のフェーズ別 AI活用マップ</text>
+
+  <!-- Phase 1：x=16, w=204 -->
+  <rect x="16" y="30" width="204" height="174" rx="10" fill="#EBF5FB" stroke="#1E3A5F" stroke-width="1.5"/>
+  <rect x="16" y="30" width="204" height="38" rx="10" fill="#1E3A5F"/>
+  <rect x="16" y="54" width="204" height="14" fill="#1E3A5F"/>
+  <text x="118" y="56" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#fff">① 実務の前（段取り・下調べ）</text>
+  <text x="30" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="18">🗺️</text>
+  <text x="54" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#1E3A5F">地図をつくる段階</text>
+  <text x="30" y="116" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">調査設計・手順の確認</text>
+  <text x="30" y="132" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">成果物イメージの作成</text>
+  <text x="30" y="148" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">リスクの洗い出し</text>
+  <rect x="24" y="162" width="188" height="30" rx="8" fill="#D6E4F0"/>
+  <text x="118" y="181" text-anchor="middle" dominant-baseline="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#1E3A5F" font-weight="700">「やり方が分からない」ときに</text>
+
+  <!-- Phase 2：x=238, w=204 -->
+  <rect x="238" y="30" width="204" height="174" rx="10" fill="#D5F5E3" stroke="#0F6E56" stroke-width="1.5"/>
+  <rect x="238" y="30" width="204" height="38" rx="10" fill="#0F6E56"/>
+  <rect x="238" y="54" width="204" height="14" fill="#0F6E56"/>
+  <text x="340" y="56" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#fff">② 実行中・前半（形にする）</text>
+  <text x="252" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="18">⚡</text>
+  <text x="276" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#085041">ゼロから形にする段階</text>
+  <text x="252" y="116" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">アイデア出し・議論</text>
+  <text x="252" y="132" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">ToDoリスト・タスク整理</text>
+  <text x="252" y="148" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">下書き・データ整理</text>
+  <rect x="246" y="162" width="188" height="30" rx="8" fill="#9FE1CB"/>
+  <text x="340" y="181" text-anchor="middle" dominant-baseline="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#085041" font-weight="700">「手が足りない・アイデアほしい」に</text>
+
+  <!-- Phase 3：x=460, w=204 -->
+  <rect x="460" y="30" width="204" height="174" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="1.5"/>
+  <rect x="460" y="30" width="204" height="38" rx="10" fill="#854F0B"/>
+  <rect x="460" y="54" width="204" height="14" fill="#854F0B"/>
+  <text x="562" y="56" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#fff">③ 実行中・後半（磨き上げ）</text>
+  <text x="474" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="18">✨</text>
+  <text x="498" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#633806">プロ級に仕上げる段階</text>
+  <text x="474" y="116" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">フィードバック・検品</text>
+  <text x="474" y="132" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">ツッコミ予測・対策</text>
+  <text x="474" y="148" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">言葉のブラッシュアップ</text>
+  <rect x="468" y="162" width="188" height="30" rx="8" fill="#E8C97A"/>
+  <text x="562" y="181" text-anchor="middle" dominant-baseline="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#633806" font-weight="700">「自信がない・良くしたい」に</text>
+
+  <!-- 矢印ボタン（全ボックスの後に描画→最前面） -->
+  <!-- gap1中央: (220+238)/2=229、ただし右端220なので gap=220〜238、中心x=229 -->
+  <rect x="219" y="103" width="20" height="26" rx="10" fill="#0F6E56"/>
+  <text x="229" y="120" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="14" fill="#fff">→</text>
+  <!-- gap2中央: (442+460)/2=451 -->
+  <rect x="441" y="103" width="20" height="26" rx="10" fill="#854F0B"/>
+  <text x="451" y="120" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="14" fill="#fff">→</text>
+
+  <!-- 底辺ラベル -->
+  <text x="340" y="219" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#1E3A5F" opacity="0.6">仕事のフェーズに合わせてAIを「使い分ける」のが、デジタル時代の新しい働き方</text>
+</svg>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="h2">① 実務の「前」 ─ 段取りと下調べ</div>
+  <div class="callout navy">
+    <div class="callout-head">🗺️ ゴールは「地図をつくること」。仕事に取り掛かる前にAIと一緒に全体像を描く</div>
+    <div class="callout-body"><p>「やり方がわからない」「どこから手をつければいいか分からない」というときに最も効果的なフェーズです。</p></div>
+  </div>
+
+  <table class="tbl">
+    <tr><th style="width:22%">目的</th><th style="width:44%">頼み方の例（そのまま使える）</th><th>得られるもの</th></tr>
+    <tr>
+      <td><strong>📋 調査の設計</strong></td>
+      <td>「○○を調べるなら、事前にどんな情報が必要？効率的な調べ方も教えて」</td>
+      <td>必要情報リスト・効率的な調べ方</td>
+    </tr>
+    <tr>
+      <td><strong>📐 プロセス設計</strong></td>
+      <td>「○○を完遂するための一般的な手順・工程を書き出して。抜け漏れが出やすいポイントも教えて」</td>
+      <td>漏れのない工程表・全体像の把握</td>
+    </tr>
+    <tr>
+      <td><strong>📄 成果物の目次作成</strong><br><span style="font-size:11px;color:var(--teal);font-weight:700">★最重要</span></td>
+      <td>「○○（資料名）の目次案を作って。対象は○○、目的は○○です」</td>
+      <td>完成形のイメージ確定・「ゴールのズレ」防止</td>
+    </tr>
+    <tr>
+      <td><strong>⚠️ リスク洗い出し</strong></td>
+      <td>「○○を進める上でよくある失敗・トラブルを5つ教えて。それぞれの対策も」</td>
+      <td>先回りの対策・想定外を減らせる</td>
+    </tr>
+  </table>
+
+  <!-- Phase 1 事例 -->
+  <div class="h2">💡 実例で見る（実務の前）</div>
+  <div class="cards">
+    <div class="card navy">
+      <h3>🏆 助成金申請の準備</h3>
+      <p class="before">Before：何から書けばいいか分からず、いきなり本文を書き始めて後から構成を大幅修正</p>
+      <p class="after">After：「○○財団の助成金申請書の目次案を作って。事業概要・必要性・実施計画・評価を含めて」→ 全体像が5分で完成。書く順番が明確に</p>
+    </div>
+    <div class="card navy">
+      <h3>📅 イベント企画の段取り</h3>
+      <p class="before">Before：過去のメモや経験だけで段取りを組み、毎回何かを忘れて直前に慌てる</p>
+      <p class="after">After：「50人規模の講演会を3ヶ月後に開催するための工程表を作って」→ 見落としていた会場手配・広報・当日運営のタスクが一覧に</p>
+    </div>
+    <div class="card navy">
+      <h3>⚠️ 新規連携前のリスク確認</h3>
+      <p class="before">Before：連携開始後にトラブル発生。「こんなことになるとは…」と後悔</p>
+      <p class="after">After：「他団体との業務提携を進める上でよくある失敗やリスクを教えて」→ 契約書の確認・役割分担の明確化など5つの対策を事前に実施</p>
+    </div>
+    <div class="card navy">
+      <h3>📚 書店：フェア企画の段取り</h3>
+      <p class="before">Before：テーマ選書フェアの準備をいつも「なんとなく」始めてしまい、直前にPOPや什器の準備が間に合わない</p>
+      <p class="after">After：「地域書店で夏の読書フェアを開催するための準備工程を2ヶ月分で作って」→ 選書・POP制作・棚作り・SNS告知のタスクと期限が一覧に。1ヶ月前から動けるように</p>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="h2" style="margin-top:32px">② 実行中（前半） ─ アイデアと作業の代行</div>
+  <div class="callout teal">
+    <div class="callout-head">⚡ 「考えること」と「作業すること」の両方をAIに手伝わせる段階</div>
+    <div class="callout-body"><p>「手が足りない」「アイデアが出ない」というときに使います。アイデア出しから実際の下書き作成・データ整理まで、AIを「もう一人のスタッフ」として活用しましょう。</p></div>
+  </div>
+
+  <table class="tbl">
+    <tr><th style="width:22%">目的</th><th style="width:44%">頼み方の例（そのまま使える）</th><th>得られるもの</th></tr>
+    <tr>
+      <td><strong>💡 アイデア出し</strong></td>
+      <td>「○○の企画案を10個出して。実現可能性より多様性を重視して」</td>
+      <td>思考の幅が広がる・盲点の発見</td>
+    </tr>
+    <tr>
+      <td><strong>🥊 壁打ち・反論</strong></td>
+      <td>「私は○○という方針を考えている。反対の立場から意見を言って」</td>
+      <td>自分の案の弱点・見落としに気づける</td>
+    </tr>
+    <tr>
+      <td><strong>✅ タスク整理</strong></td>
+      <td>「○○プロジェクトで今週やるべきことをToDoリストにして。優先順位もつけて」</td>
+      <td>優先順位が明確に・漏れ防止</td>
+    </tr>
+    <tr>
+      <td><strong>✍️ 下書き作成</strong><br><span style="font-size:11px;color:var(--teal);font-weight:700">★最も多い用途</span></td>
+      <td>「○○（文書の種類）の下書きを作って。背景は○○、対象は○○、トーンは○○で」</td>
+      <td>60点のたたき台が数分で完成</td>
+    </tr>
+    <tr>
+      <td><strong>🔄 データ・作業整理</strong></td>
+      <td>「以下のバラバラなメモを日付順に並べ替えて、要点を箇条書きにまとめて」</td>
+      <td>単純作業を数分で処理</td>
+    </tr>
+    <tr>
+      <td><strong>📊 表・書式作成</strong></td>
+      <td>「以下のアンケート結果を見やすい表にまとめて。列は○○で」</td>
+      <td>実務的な成果物が即作成可能</td>
+    </tr>
+  </table>
+
+  <!-- Phase 2 事例 -->
+  <div class="h2">💡 実例で見る（実行中・前半）</div>
+  <div class="cards">
+    <div class="card teal">
+      <h3>✍️ 活動報告書の下書き</h3>
+      <p class="before">Before：毎回「序文」と「まとめ」で詰まって、報告書1本に3〜4時間かかっていた</p>
+      <p class="after">After：「今年度の活動概要を渡すので、活動報告書の序文（400字）と締めの言葉を書いて」→ 2パターン提示され、10分で選んで微調整。完成</p>
+    </div>
+    <div class="card teal">
+      <h3>💡 SNS企画のアイデア出し</h3>
+      <p class="before">Before：毎週のSNS投稿ネタに悩み、担当者が一人でずっと考え込んでいた</p>
+      <p class="after">After：「フードバンクのSNSに使える投稿企画を10案出して。温かみのあるトーンで、行動につながるもの」→ すぐに採用できる案3つと参考になる案7つが出てきた</p>
+    </div>
+    <div class="card teal">
+      <h3>📊 アンケート結果の整理</h3>
+      <p class="before">Before：イベント後のアンケートの自由記述欄を読み込んで分類するのに半日かかっていた</p>
+      <p class="after">After：「以下の自由記述コメントを『満足点』『改善点』『要望』の3つに分類して」→ 50件のコメントが5分で分類完了。レポートのたたき台も同時作成</p>
+    </div>
+    <div class="card teal">
+      <h3>🎨 クリエイティブ：デザイン提案書の下書き</h3>
+      <p class="before">Before：クライアントへの提案書は毎回ゼロから書き、「文章が硬い」「もっと熱量を感じたい」と言われ書き直しになることが多かった</p>
+      <p class="after">After：「グラフィックデザインの提案書の下書きを作って。クライアントはカフェオーナー、目的はブランドロゴの刷新、温かみとおしゃれさを両立するトーンで」→ 方向性・プロセス・期待効果が整理された提案文が10分で完成</p>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="h2" style="margin-top:32px">③ 実行中（後半） ─ 仕上げと磨き上げ</div>
+  <div class="callout amber">
+    <div class="callout-head">✨ 自分が作ったものをプロ級に引き上げる段階</div>
+    <div class="callout-body"><p>「これでいいか自信がない」「もっと良くしたい」というときに使います。AIを「厳しい校閲者」「想定読者」として活用し、送る前・提出前に品質を最大化しましょう。</p></div>
+  </div>
+
+  <table class="tbl">
+    <tr><th style="width:22%">目的</th><th style="width:44%">頼み方の例（そのまま使える）</th><th>得られるもの</th></tr>
+    <tr>
+      <td><strong>🔍 検品・抜け漏れ確認</strong><br><span style="font-size:11px;color:var(--amber);font-weight:700">★提出前に必ず</span></td>
+      <td>「この文書の論理的におかしい点・説明が不足している点を指摘して」</td>
+      <td>品質向上・論理の補強</td>
+    </tr>
+    <tr>
+      <td><strong>🎯 ツッコミ予測</strong></td>
+      <td>「この資料を○○（上司・審査員・理事）に出したら、どんな質問をされそう？答え方も教えて」</td>
+      <td>想定外の指摘をゼロにできる</td>
+    </tr>
+    <tr>
+      <td><strong>🔄 構造・視覚化</strong></td>
+      <td>「この文章の内容を、見やすい表か箇条書きに変えて」</td>
+      <td>一目で伝わる資料になる</td>
+    </tr>
+    <tr>
+      <td><strong>✏️ 言葉の磨き上げ</strong></td>
+      <td>「このタイトル・キャッチコピーをより読者に刺さる表現に5案考えて」</td>
+      <td>読まれる・行動につながる文章に</td>
+    </tr>
+  </table>
+
+  <!-- Phase 3 事例 -->
+  <div class="h2">💡 実例で見る（実行中・後半）</div>
+  <div class="cards">
+    <div class="card amber">
+      <h3>🔍 助成金申請書の最終チェック</h3>
+      <p class="before">Before：「採択されるか自信がない…」と不安なまま提出。後から「この視点が足りなかった」と気づく</p>
+      <p class="after">After：「この申請書を助成財団の審査員の目線で読んで、弱い点・補強すべき点を3つ指摘して」→ 事業の必要性の説明が薄いと指摘され、提出前に改善できた</p>
+    </div>
+    <div class="card amber">
+      <h3>🎯 理事会資料のツッコミ対策</h3>
+      <p class="before">Before：理事会で予期しない質問が連発。その場で答えられず「持ち帰ります」が多発</p>
+      <p class="after">After：「この事業計画を理事・評議員に提示したら、どんな疑問や反対意見が出そう？」→ 予想Q&Aを事前作成。本番で想定内の質問に全て答えられた</p>
+    </div>
+    <div class="card amber">
+      <h3>✏️ 寄付募集文のブラッシュアップ</h3>
+      <p class="before">Before：書いた文章が事実の羅列になり、「読んでも行動する気にならない」と言われた</p>
+      <p class="after">After：「この寄付呼びかけ文を読んで、感情に訴える表現に書き直して。具体的なエピソードの入れ方も教えて」→ 寄付申込率が1.3倍に改善</p>
+    </div>
+    <div class="card amber">
+      <h3>📚 書店：棚POPのキャッチコピー磨き</h3>
+      <p class="before">Before：自分で書いたPOPコピーが「平凡だ」「もっと手に取りたくなる言葉にして」とスタッフに言われ、毎回悩んでいた</p>
+      <p class="after">After：「この本の内容をもとに、思わず手に取りたくなる棚POPのキャッチコピーを5案作って。ターゲットは30〜40代の働く女性」→ 5案の中から即決できる案が出てきて、制作時間が3分の1に</p>
+    </div>
+  </div>
+
+  <!-- まとめ：使い分けのコツ -->
+  <div class="h2" style="margin-top:32px">💡 使い分けのコツ ─ 3行でまとめると</div>
+  <div class="steps" style="margin-top:14px">
+    <div class="step-box s1">
+      <span class="step-badge">前</span>
+      <div>
+        <strong>「やり方が分からない」→ 実務の前に聞く</strong>
+        <span>調査設計・手順確認・目次作成・リスク洗い出し</span>
+      </div>
+    </div>
+    <div class="step-box s2">
+      <span class="step-badge">前半</span>
+      <div>
+        <strong>「手が足りない・アイデアがほしい」→ 実行中の前半に頼む</strong>
+        <span>アイデア出し・下書き作成・データ整理・タスク整理</span>
+      </div>
+    </div>
+    <div class="step-box s3">
+      <span class="step-badge">後半</span>
+      <div>
+        <strong>「自信がない・もっと良くしたい」→ 実行中の後半にチェックさせる</strong>
+        <span>フィードバック・ツッコミ予測・ブラッシュアップ</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- コピペ用プロンプト -->
+  <div class="h2" style="margin-top:28px">📋 このまま使えるプロンプト（フェーズ別）</div>
+  <p style="font-size:13px;color:#666;margin:-8px 0 12px">迷ったらここから。〇〇を自分の状況に置き換えてそのまま貼り付けてください。</p>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 ① 前：成果物の目次をつくる</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">「〇〇（例：○○財団 助成金申請書）」の目次案を作ってください。
+対象読者：〇〇（例：審査員、地域住民、上司）
+目的：〇〇（例：採択を得るため、活動の承認を得るため）
+含めるべき要素：〇〇（例：事業概要・必要性・実施計画・評価方法）
+
+[完成形のイメージがあればここに記載]</div>
+  </div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 ② 前半：下書きをつくる</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">以下の情報をもとに、〇〇（例：活動報告書の序文・お礼メール・イベント案内）の下書きを作ってください。
+対象：〇〇（例：寄付者、地域住民、連携先担当者）
+目的：〇〇（例：感謝を伝える、参加を促す、承認を得る）
+トーン：〇〇（例：温かみのある・丁寧・親しみやすい）
+文字数：〇〇字程度（例：400字程度）
+
+[ここに活動概要・メモ・参考情報を貼り付け]</div>
+  </div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 ③ 後半：フィードバックをもらう</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">以下の文書を〇〇（例：助成財団の審査員・理事・初めて読む地域住民）の立場から読んで、
+①論理的に弱い点
+②説明が不足している点
+③表現を改善すべき点
+の3つの観点でフィードバックしてください。それぞれ具体的な改善案も添えて。
+
+[ここに文書を貼り付け]</div>
+  </div>
+
+</div>
+
+
+<!-- 第3章：役割分担 -->
+<div class="section" id="sec-3">
+  <div class="sec-header"><div class="sec-num">3</div><div class="sec-title">任せる仕事・人間がやる仕事 ─ 役割分担の考え方</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>AIに任せると時短できる業務が4パターンで整理できる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「これだけは人間がやる」ラインが明確になる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>今すぐ試せる具体的な業務シーンが見つかる</div>
+    </div>
+  </div>
+  <div class="h2">🗺️ 役割分担の全体像</div>
+<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 20px"><svg width="100%" viewBox="0 0 680 310" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="680" height="310" fill="#f8f9fa"/>
+<text x="340" y="26" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">役割分担の全体像 ─ AIと人間の担当領域</text>
+<rect x="30" y="42" width="290" height="250" rx="12" fill="#D5F5E3" stroke="#0F6E56" stroke-width="1"/>
+<rect x="30" y="42" width="290" height="38" rx="12" fill="#0F6E56"/>
+<rect x="30" y="68" width="290" height="12" fill="#0F6E56"/>
+<text x="175" y="68" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="14" font-weight="700" fill="#fff">🤖 AIが得意なこと</text>
+<text x="52" y="106" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#085041">📋 情報のまとめ・要約・整理</text>
+<text x="52" y="130" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#085041">✍️ 文章の下書き・アイデア出し</text>
+<text x="52" y="154" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#085041">🔍 調べ物・情報収集の入り口</text>
+<text x="52" y="178" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#085041">🌐 翻訳・言い換え・校正</text>
+<text x="52" y="202" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#085041">🔄 繰り返し作業・書式変換</text>
+<text x="52" y="226" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#085041">💡 選択肢の列挙・発散</text>
+<text x="52" y="254" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#0F6E56" font-style="italic">→ 速さ・量・網羅性が強み</text>
+<text x="340" y="165" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="22" fill="#1E3A5F" opacity="0.35">⇄</text>
+<text x="340" y="185" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#1E3A5F" opacity="0.4">協働</text>
+<rect x="360" y="42" width="290" height="250" rx="12" fill="#EBF5FB" stroke="#1E3A5F" stroke-width="1"/>
+<rect x="360" y="42" width="290" height="38" rx="12" fill="#1E3A5F"/>
+<rect x="360" y="68" width="290" height="12" fill="#1E3A5F"/>
+<text x="505" y="68" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="14" font-weight="700" fill="#fff">👤 人間が必ずやること</text>
+<text x="380" y="106" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#0C447C">🎯 目標・ビジョンの決定</text>
+<text x="380" y="130" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#0C447C">✅ 成果物の確認・承認・責任</text>
+<text x="380" y="154" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#0C447C">🤝 繊細な人間関係の調整</text>
+<text x="380" y="178" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#0C447C">🔒 個人情報・機密の判断</text>
+<text x="380" y="202" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#0C447C">📣 対外的な発信の最終判断</text>
+<text x="380" y="226" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#0C447C">❤️ 現場感覚・経験・共感</text>
+<text x="380" y="254" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1E3A5F" font-style="italic">→ 判断・価値観・責任が強み</text>
+</svg></div>
+<div class="h2">✅ AIに任せると効率化できる仕事</div>
+  <div class="cards">
+    <div class="card teal"><h3>📋 情報のまとめ・要約</h3><p class="before">Before：1時間の議事録作成に30〜40分かかっていた</p><p class="after">After：録音テキストを貼り付けて「決定事項・課題・アクションを整理して」→ 5分で完成</p></div>
+    <div class="card teal"><h3>✍️ 文章の下書き・アイデア出し</h3><p class="before">Before：助成金申請書の「事業の意義」を毎回悩んでいた</p><p class="after">After：活動概要と実績を伝えて下書き依頼 → たたき台が5分で完成。微調整するだけ</p></div>
+    <div class="card teal"><h3>🔍 調べ物・情報収集</h3><p class="before">Before：他団体の先進事例調査に半日かかっていた</p><p class="after">After：「先進事例を5つ、特徴と成果を添えて教えて」→ 10分で概要把握（要公式サイト確認）</p></div>
+    <div class="card teal"><h3>🌐 翻訳・言い換え・チェック</h3><p class="after">英語資料の翻訳 / メールの敬語チェック / 難しい専門用語をわかりやすく言い換え</p></div>
+  </div>
+  <div class="h2 mt">❌ 人間が必ずやるべきこと</div>
+  <table class="tbl"><tr><th>AIに任せてはいけないこと</th><th>その理由</th></tr><tr><td><strong>最終的な目標・ビジョンを決める</strong></td><td>組織の価値観や優先度はAIには判断できない</td></tr><tr><td><strong>成果物の内容確認・承認</strong></td><td>AIは「もっともらしい嘘」をつくことがある</td></tr><tr><td><strong>繊細な人間関係の調整</strong></td><td>「このメール、あの方に失礼かも」はAIには難しい</td></tr><tr><td><strong>個人情報・機密情報の取り扱い</strong></td><td>セキュリティリスク（第4章参照）</td></tr><tr><td><strong>対外的な発信の最終判断</strong></td><td>事実誤認があっても、責任を取るのは人間</td></tr></table>
+
+  <div class="h2">📖 参考：LLMに向いている仕事の見極め方（実践フレーム）</div>
+  <div class="callout teal">
+    <div class="callout-head">✅ LLMが最も輝ける問題の3条件</div>
+    <div class="callout-body">
+      <p>LayerXのエンジニアが実務で導き出した判断基準です。3つ揃うほど、AIに任せる価値が高まります。</p>
+      <p style="margin-top:8px"><strong>① 曖昧性がある</strong>：単純なルールやif-thenでは処理できない判断が必要</p>
+      <p><strong>② 大量処理が必要</strong>：人間が手作業でやると膨大な時間がかかる</p>
+      <p><strong>③ 非対称なメリット</strong>：自動化による価値が、時折発生するエラーのコストを大幅に上回る</p>
+      <p style="margin-top:8px;font-size:12px;color:#888">出典：「LLMに何を任せ、何を任せないか」LayerX 蔡安平（2026.03）</p>
+    </div>
+  </div>
+
+  <div class="h2" style="font-size:15px;margin:20px 0 12px">「確実性」×「ミス許容度」で仕事を分類する</div>
+  <table class="tbl">
+    <tr><th style="width:20%">パターン</th><th>条件</th><th style="width:30%">ソーシャルセクターの例</th><th style="width:20%">判断</th></tr>
+    <tr>
+      <td><strong>A. 確定値を使用</strong></td>
+      <td>正解が明確（確実性100%）または過去履歴から確実に流用できる</td>
+      <td>助成金の財団名・締切日・提出先・金額</td>
+      <td><span class="chip chip-teal">必ず自分で確認</span></td>
+    </tr>
+    <tr>
+      <td><strong>B. LLMに生成させる</strong></td>
+      <td>推測可能で、ある程度のミスが許容できる</td>
+      <td>申請書の文体・SNS投稿文・報告書の序文・要約</td>
+      <td><span class="chip chip-navy">AIに任せてOK</span></td>
+    </tr>
+    <tr>
+      <td><strong>C. 空欄のまま・人間が判断</strong></td>
+      <td>確実性が低い、またはミスが絶対に許されない</td>
+      <td>個人の支援内容・関係者の氏名・法的判断・最終意思決定</td>
+      <td><span class="chip chip-teal">人間が担当</span></td>
+    </tr>
+  </table>
+  <div class="callout amber" style="margin-top:12px">
+    <div class="callout-head">💡 「ハンマーを持つ人には、すべてが釘に見えてしまう」</div>
+    <div class="callout-body">
+      <p>AIを使い始めると「何でもAIで解決しよう」と思いがちですが、それが最初の落とし穴です。LLMはすごいが、万能ではなく得手不得手がある。課題を分解し、A・B・Cを適材適所に使い分けることが、実務で使えるAI活用の本質です。</p>
+      <p style="margin-top:6px;font-size:12px;color:#888">── LayerX「LLMに何を任せ、何を任せないか」（2026.03）</p>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- 第4章：マインドセット -->
+<div class="section" id="sec-4">
+  <div class="sec-header"><div class="sec-num">4</div><div class="sec-title">AIと上手に付き合う ─ 14のマインドセット</div></div>
+  <!-- ③ この章で得られること（重要章は accent） -->
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>AIを怖れず・過信せず使う14の心構えが身につく</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「指示の出し方次第で出力が変わる」体験的に理解できる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>A〜Dの4カテゴリー別に、明日から使えるコツが整理される</div>
+    </div>
+  </div>
+  <div class="h2">🗺️ 14のマインドセット 全体マップ</div>
+<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 20px"><svg width="100%" viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="680" height="360" fill="#f8f9fa"/>
+<text x="340" y="26" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">14のマインドセット ─ 4カテゴリーの構造</text>
+<circle cx="340" cy="188" r="46" fill="#1E3A5F"/>
+<text x="340" y="183" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="22">🤖</text>
+<text x="340" y="206" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">生成AI</text>
+<rect x="40" y="44" width="190" height="130" rx="10" fill="#D6E4F0" stroke="#1E3A5F" stroke-width="0.5"/>
+<rect x="40" y="44" width="190" height="34" rx="10" fill="#1E3A5F"/>
+<rect x="40" y="66" width="190" height="12" fill="#1E3A5F"/>
+<text x="135" y="66" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">A｜AIの捉え方</text>
+<text x="58" y="98" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">A-1 優秀な新人アシスタント</text>
+<text x="58" y="118" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">A-2 思考を拡張するパートナー</text>
+<text x="58" y="138" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">A-3 下書き＆たたき台メーカー</text>
+<rect x="450" y="44" width="190" height="158" rx="10" fill="#D5F5E3" stroke="#0F6E56" stroke-width="0.5"/>
+<rect x="450" y="44" width="190" height="34" rx="10" fill="#0F6E56"/>
+<rect x="450" y="66" width="190" height="12" fill="#0F6E56"/>
+<text x="545" y="66" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">B｜仕事の渡し方</text>
+<text x="468" y="98" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">B-1 背景（コンテキスト）を渡す</text>
+<text x="468" y="118" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">B-2 スパーリングパートナー</text>
+<text x="468" y="138" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">B-3 役割（ペルソナ）を与える</text>
+<text x="468" y="158" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">B-4 反復・対話を恐れない</text>
+<rect x="40" y="222" width="190" height="118" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+<rect x="40" y="222" width="190" height="34" rx="10" fill="#854F0B"/>
+<rect x="40" y="244" width="190" height="12" fill="#854F0B"/>
+<text x="135" y="244" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">C｜思考力を守る</text>
+<text x="58" y="278" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">C-1 考えることをやめない</text>
+<text x="58" y="298" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">C-2 AIらしさに気づく目を養う</text>
+<text x="58" y="318" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">C-3 AI浅慮を自覚する</text>
+<text x="58" y="334" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">C-4 最終責任は自分にある</text>
+<rect x="450" y="222" width="190" height="118" rx="10" fill="#EEEDFE" stroke="#3C3489" stroke-width="0.5"/>
+<rect x="450" y="222" width="190" height="34" rx="10" fill="#3C3489"/>
+<rect x="450" y="244" width="190" height="12" fill="#3C3489"/>
+<text x="545" y="244" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#fff">D｜学習・成長</text>
+<text x="468" y="278" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">D-1 失敗をデータとして蓄積</text>
+<text x="468" y="298" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">D-2 うまくいった型を共有</text>
+<text x="468" y="318" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#1C2833">D-3 小さく試し続ける</text>
+<line x1="230" y1="110" x2="294" y2="162" stroke="#1E3A5F" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.4"/>
+<line x1="450" y1="120" x2="386" y2="162" stroke="#0F6E56" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.4"/>
+<line x1="230" y1="282" x2="294" y2="218" stroke="#854F0B" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.4"/>
+<line x1="450" y1="282" x2="386" y2="218" stroke="#3C3489" stroke-width="0.8" stroke-dasharray="4 3" opacity="0.4"/>
+</svg></div>
+<!-- ① アコーディオン展開ヒント -->
+  <div class="ms-hint">各項目をクリックすると、ポイント詳細と活用事例（Before/After）が展開します</div>
+
+  <div class="cat-header A"><div class="cat-badge">A</div>AIの捉え方・存在の定義づけ（3項目）</div>
+  <p class="cat-desc">AIに対する「第一印象」が、その後の使い方の質を大きく左右します。</p>
+
+  <!-- A-1 最初から開いた状態 -->
+  <div class="ms-wrap A open" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">A-1</span><div class="ms-content"><div class="ms-title">「魔法」でも「脅威」でもなく ─「優秀な新人アシスタント」</div><div class="ms-point">恐れず、過信もせず。背景を教えれば動く。教えなければ一般的な答えしか返さない。</div></div><span class="ms-toggle">▲ 閉じる</span></div>
+    <div class="ms-points"><div class="ms-pi">丁寧に背景を伝えるほど、出力の精度は上がる</div><div class="ms-pi">「これくらいわかるだろう」という思い込みは禁物</div><div class="ms-pi">「怖い・難しい」と距離を置くより、まず話しかけてみることが大切</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 はじめてAIに話しかける</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>「なんか難しそう」と思って試さずにいた。何を聞けばいいかもわからなかった</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>「今日のランチのおすすめを教えて」と話しかけるだけで、距離が縮まった。小さな体験から始めるのが一番の近道</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap A" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">A-2</span><div class="ms-content"><div class="ms-title">「道具」ではなく「思考を拡張するパートナー」</div><div class="ms-point">AIの出力をたたき台に、自分の思考を深める使い方が本質。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">自分のアイデアをAIに話しかけ、掘り下げてもらう</div><div class="ms-pi">「自分ならこう思う。AIはどう考えるか？」という対話が有効</div><div class="ms-pi">AIと話すことで、自分の考えが整理されることも多い</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 事業企画のアイデア壁打ち</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>「新しいフードバンクの受け取り方式」を考えていたが、煮詰まってしまった</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>「私はドライブスルー型にしたいと思っている。その利点と課題を教えて」とAIに話しかけると、気づかなかった3つの課題が出てきた。企画がさらに深まった</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap A" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">A-3</span><div class="ms-content"><div class="ms-title">「完成品製造機」ではなく「下書き＆たたき台メーカー」</div><div class="ms-point">AIの出力は常に「素材」。磨くのは人間の仕事。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">出てきたものを「磨く」のが人間の仕事</div><div class="ms-pi">60点のたたき台から始める方が、ゼロから書くより速い</div><div class="ms-pi">「AIが書いた感」がある文章は、自分の言葉で上書きして初めて使える</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 寄付募集のお礼メール作成</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>AIに「お礼メールを書いて」と頼んだら、丁寧だが他人行儀な文章が出てきてそのまま送れなかった</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>「たたき台を作って」と依頼してAIの文章を受け取り、自分らしい言い回しに3〜4箇所修正。10分で完成。ゼロから書くより圧倒的に速かった</div></div></div></div>
+  </div>
+
+  <div class="cat-header B"><div class="cat-badge">B</div>仕事の渡し方・指示の出し方（4項目）</div>
+  <p class="cat-desc">AIへの「指示の出し方」は、部下や同僚への仕事の渡し方とほぼ同じです。</p>
+
+  <div class="ms-wrap B" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">B-1</span><div class="ms-content"><div class="ms-title">「丸投げ」はNG ─ 背景（コンテキスト）を渡す</div><div class="ms-point">「誰に・何のために・どんなトーンで」の3点を伝えるだけで出力の質が劇的に変わる。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">悪い例：「助成金の申請文を書いて」</div><div class="ms-pi">良い例：「子育て支援NPO向けに、○○財団の助成金申請書（400字）を書いてください。対象は3〜6歳の子どもを持つ保護者で、地域密着の温かみのあるトーンで」</div><div class="ms-pi">渡すべき背景：目的・対象者・トーン・文字数・制約条件</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 ファンドレイジング用説明文の作成</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>「寄付のお願い文を書いて」→ 的外れで使えない文章が出てきた</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>「50代の地域住民に向けて、月額500円の寄付を呼びかける200字の文章を、温かみのあるトーンで書いて」→ そのまま使えるレベルの文章が出てきた</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap B" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">B-2</span><div class="ms-content"><div class="ms-title">「スパーリングパートナー」として壁打ちする</div><div class="ms-point">全部やらせない。「この案の弱点を指摘して」「別の切り口を5つ出して」が最も効果的。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">「この企画書を読んで、審査員が気にしそうな点を教えて」</div><div class="ms-pi">「私はAという方針を考えている。反論してほしい」</div><div class="ms-pi">「もっと大胆な提案があれば3つ教えて」</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 助成金申請書のブラッシュアップ</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>「この企画、これで大丈夫かな…」と一人で悩んで煮詰まっていた</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>AIに企画書を読ませ「この事業の課題・リスクを5つ指摘して」と聞いたら、自分では気づかなかった視点が3つ出てきた。申請前に弱点を潰せた</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap B" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">B-3</span><div class="ms-content"><div class="ms-title">「役割（ペルソナ）」を与えて専門家の視点を借りる</div><div class="ms-point">「あなたは○○として答えてください」と役割を付与すると、視点と出力の質が変わる。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">「NPOの広報担当として、この活動報告を読みやすく書き直して」</div><div class="ms-pi">「助成財団の審査員の立場から、この申請書の改善点を教えて」</div><div class="ms-pi">役割が明確なほど、AIが「どう答えるか」の基準が揃い、ズレが少なくなる</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 活動報告書の書き直し</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>「活動報告書をわかりやすく書き直して」と頼んだら、内容は同じで表現が少し変わるだけだった</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>「この団体の支援者（寄付者）の立場から、この報告書で感動できる部分と不満に感じる部分を教えて」と聞いたら、支援者目線の具体的な改善案が出てきた</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap B" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">B-4</span><div class="ms-content"><div class="ms-title">「反復・対話」を恐れない ─ 1回で完成させない</div><div class="ms-point">最初の出力が60点でも当然。「もっと具体的に」「100点版に直して」と繰り返すのが正しい使い方。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">「もっと短くして（200字以内）」</div><div class="ms-pi">「この回答を60点として、100点に改善してください」</div><div class="ms-pi">会話を続けるほど、AIは文脈を理解して精度が上がる</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 SNS投稿文のブラッシュアップ</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>最初に出てきたSNS投稿文が硬くて使えなかった。「もういいや」と諦めた</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>「もっとカジュアルにして」「絵文字を1つ入れて」「最後に行動を促すひとことを足して」と3回やりとりしたら、自分のイメージ通りの文章になった</div></div></div></div>
+  </div>
+  <!-- ④ プロンプトにコピーボタン -->
+  <div class="prompt" style="margin-top:10px">
+    <div class="prompt-header"><span class="prompt-label">💬 B-4 すぐ使えるプロンプト例</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">今の回答を60点として、100点版に改善してください。改善した点も教えてください。</div>
+  </div>
+
+  <div class="cat-header C"><div class="cat-badge">C</div>自分の思考・判断力を守る（4項目）</div>
+  <p class="cat-desc">AIが便利になるほど、「考えることを手放してしまう」リスクが高まります。AIは思考の補助です。</p>
+
+  <div class="ms-wrap C" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">C-1</span><div class="ms-content"><div class="ms-title">「考えること」をやめない ─ AIは思考の代替ではない</div><div class="ms-point">AIの答えが正しいか、自組織に合っているかを判断するのは自分。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">AIが出した案を「なぜこれが良いのか」言語化できるか確認する</div><div class="ms-pi">「AIがそう言ったから」は理由にならない</div><div class="ms-pi">AIの出力を読んで「なんとなく納得」で終わらせない</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 事業方針の検討</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>AIが提案した方針案を「なるほど」と思いそのまま採用。後から「自組織のミッションとズレている」と気づいた</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>AIの提案を読んだ後「この提案が自分たちの活動に合っている理由を3つ言えるか」と自問するようにした。説明できないものは採用しない</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap C" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">C-2</span><div class="ms-content"><div class="ms-title">「AIらしさ」に気づく目を養う ─ 自分らしさで上書きする</div><div class="ms-point">「なんとなく整っているが薄い文章」はAI臭が強い。組織の言葉で上書きして初めて使える。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">AIの文章は「型は正しいが体温がない」ことが多い</div><div class="ms-pi">「うちの団体らしいか？」「自分が話す言葉か？」を常にチェック</div><div class="ms-pi">キーワードや具体的なエピソードは人間が加える</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 活動報告のSNS投稿</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>AIが作ったSNS文章を投稿したら、フォロワーから「なんかいつもと違う」とコメントが来た</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>AIが作った骨格に、実際に支援した家族のエピソード（固有名詞はNG）と担当者の一言感想を加えたら「こういう投稿が好き」という反応が増えた</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap C" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">C-3</span><div class="ms-content"><div class="ms-title">「AI浅慮」を自覚する ─ 網羅感に惑わされない</div><div class="ms-point">AIの出力は網羅的に見えるが、深く考えているわけではない。「答えが出た感」で止まらない。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">AIは「それらしい答え」を返すのが得意。正しいかどうかは別</div><div class="ms-pi">「5つのポイントが出た＝十分に考えた」ではない</div><div class="ms-pi">「これは本当に自組織の現場で起きることか？」と問い直す</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 課題分析の落とし穴</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>AIに「支援対象者が来ない理由を5つ挙げて」と聞いて、もっともらしい答えが出てきたのでそれで分析を終えた。実際には現場で起きていない原因ばかりだった</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>AIの5つの原因を「自分たちの現場で実際に起きているか」を現場スタッフと確認。AI分析はあくまで「仮説リスト」として使い、現場観察と組み合わせるようにした</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap C" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">C-4</span><div class="ms-content"><div class="ms-title">「最終責任は自分にある」を忘れない</div><div class="ms-point">AIが書いた文章でも、送信・発信した責任は自分にある。「AIが書いた」は免責にならない。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">対外的な文書・発信は必ず人の目で確認してから使う</div><div class="ms-pi">ファクトチェックは省略しない（数字・日付・固有名詞は要注意）</div><div class="ms-pi">「AIが言っていたから」という根拠は通用しない</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 外部への資料送付</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>AIが作った提案書の数字（統計データ）をそのまま使ったら、実際には存在しないデータだった。相手先に指摘され信頼を損ねた</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>外部送付前のチェックリストに「数字・固有名詞・URLは必ず原典を確認」を追加。AI生成の文書は「下書き」であり「完成品」ではないというルールをチームで共有した</div></div></div></div>
+  </div>
+
+  <div class="cat-header D"><div class="cat-badge">D</div>学習・成長のスタンス（3項目）</div>
+  <p class="cat-desc">生成AIは週単位で進化します。小さく試し、失敗を蓄積し、チームで共有するサイクルが最速の習得ルートです。</p>
+
+  <div class="ms-wrap D" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">D-1</span><div class="ms-content"><div class="ms-title">失敗を「データ」として蓄積する</div><div class="ms-point">うまくいかなかったプロンプトも財産。「なぜ失敗したか」を言語化して次に活かす。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">うまくいかなかったとき：何を聞いたか・何が返ってきたか・何が問題だったかをメモする</div><div class="ms-pi">「AIが悪い」ではなく「指示の出し方を変えてみよう」という発想で捉える</div><div class="ms-pi">失敗パターンを3つ知っている人は、成功パターンを3つ持っている</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 会議の議事録作成の失敗</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>「この会議の議事録を作って」と頼んだら、まったく関係のない内容の議事録が出てきた</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>「音声テキストをそのまま貼り付けても理解できない」と気づき、「会議の背景・参加者・目的」を最初に伝えるメモを作成。次回から同じ失敗をしなくなった</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap D" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">D-2</span><div class="ms-content"><div class="ms-title">「うまくいった型」を言語化してチームで共有する</div><div class="ms-point">使えるプロンプトや活用パターンをメモして共有。個人の体験をチームの資産に変える。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">「この指示の出し方がうまくいった」をドキュメントに残す</div><div class="ms-pi">チームのSlack・LINEに「AI活用メモ」チャンネルを作る</div><div class="ms-pi">うまくいった例・失敗した例の両方を共有すると学びが倍増する</div><div class="ms-pi">プロンプトのテンプレートを整備すると、誰でも同じ品質の出力が得られる</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋 チームでのプロンプト共有</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>「Aさんはうまく使えているのに自分はうまくいかない」という格差が生まれた</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>月1回の振り返りMTGで「今月うまくいったAIの使い方」を発表する場を設けた。3ヶ月後には全員の活用レベルが上がり、属人化が解消された</div></div></div></div>
+  </div>
+
+  <div class="ms-wrap D" onclick="toggle(this)">
+    <div class="ms-head"><span class="ms-badge">D-3</span><div class="ms-content"><div class="ms-title">「変化のスピード」を受け入れ、小さく試し続ける</div><div class="ms-point">完璧を求めず「まず使う」。使いながら学ぶのが唯一の習得ルート。</div></div><span class="ms-toggle">▼ 展開</span></div>
+    <div class="ms-points"><div class="ms-pi">「まだ準備ができていない」と思っている間に、使い始めた人との差が広がる</div><div class="ms-pi">1日10分だけAIに話しかける習慣が、3ヶ月後に大きな差を生む</div><div class="ms-pi">「うまくいかなくて当然」という前提で試すと、失敗が怖くなくなる</div></div>
+    <div class="ms-case"><div class="ms-ci"><div class="case-tag">活用シーン</div><div class="case-scene">📋「まだ使えていない」という状態からの脱出</div><div class="case-b"><span class="ci">😟</span><div><b>Before：</b>「ちゃんと勉強してから使おう」と思い続けて半年が経った。周りはどんどん使い始めていた</div></div><div class="case-a"><span class="ci">✅</span><div><b>After：</b>今日の帰り道に「今日の振り返りを3行で書いて」とAIに話しかけるだけから始めた。1週間後には「議事録の下書き」まで使えるようになっていた</div></div></div></div>
+  </div>
+
+  <div class="callout slate" style="margin-top:24px"><div class="callout-head">💡 よく使うプロンプトの型</div><div class="callout-body"><p>「あなたは○○の専門家です。背景：〜　対象：〜　依頼：〜　条件：○○字以内、△△のトーンで」</p></div></div>
+
+  <div class="h2">📖 参考：LayerX羅針盤が教えてくれること</div>
+  <div class="callout navy">
+    <div class="callout-head">「企業文化は"標語"から生まれるのではなく、"行動"から生まれる」</div>
+    <div class="callout-body">
+      <p>株式会社LayerXの全社行動指針「羅針盤」には、こう書かれています。</p>
+      <p style="margin-top:8px">× 「技術に強い文化を作るぞ」という標語だけ掲げる</p>
+      <p>◎ 「ChatGPTやLLMを使い素早く業務改善できないかを試す」という<strong>具体的な行動</strong>をする</p>
+      <p style="margin-top:10px">どんなに立派なAI活用方針を作っても、<strong>「今日一つ試してみる」という行動が先</strong>。まずやってみることが、チームのAI文化をつくる最初の一歩です。</p>
+    </div>
+  </div>
+  <div class="cards" style="margin-top:12px">
+    <div class="card purple">
+      <h3>🎯 AIをまず試す</h3>
+      <p>「難しく考えずにAIをまず試すことを推奨する。まず試す→触る中で慣れてくる→慣れると別の使い方が思いつく。この繰り返しで、AIは怖いものではなくなる」<br><br><span style="font-size:11px;color:#888">── LayerX羅針盤 ver.3.1</span></p>
+    </div>
+    <div class="card purple">
+      <h3>📣 成功事例を皆に共有し、仕組み化する</h3>
+      <p>「偶然うまくいったことや属人的なスペシャリティを、チーム全員のノウハウとして共有できるかを考える。成功の仕組み化が組織全体のAI活用レベルを底上げする」<br><br><span style="font-size:11px;color:#888">── LayerX羅針盤 ver.3.1</span></p>
+    </div>
+    <div class="card purple">
+      <h3>🔄 過去の自分を否定し、自己変革する</h3>
+      <p>「競争のルールが大きく変わった時は、今のやり方はbetterだがbestではないと自覚して変わる必要がある。今の自分は必ず改善できる部分がある」<br><br><span style="font-size:11px;color:#888">── LayerX羅針盤 ver.3.1</span></p>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- 第5章：3つの約束 -->
+<div class="section" id="sec-5">
+  <div class="sec-header"><div class="sec-num">5</div><div class="sec-title">仕事で使うときの3つの約束 ─ 安全・正確・賢く</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>ハルシネーションの実害事例を知り、確認習慣が身につく</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>組織の情報の「入力してよいもの・いけないもの」の線引きができる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>著作権・ツールの使い分けについて基本的な方針が分かる</div>
+    </div>
+  </div>
+  <div class="h2">約束① 「もっともらしい嘘」に騙されない</div>
+  <div class="callout orange"><div class="callout-head">🚨 ハルシネーション（幻覚）とは？</div><div class="callout-body"><p>AIは知らないことでも「知っているフリ」をして、もっともらしい嘘をつくことがあります。数字・人名・法律・データなどは特に注意。<strong>「AIが言ったから正しい」は禁物</strong>です。</p></div></div>
+  <div class="card orange" style="margin:12px 0"><h3>実際にあった失敗例</h3><p class="before">Before：「○○財団の助成金、締切は3月末」とAIが答えたのをそのまま信じた。実際は2月末で申請できなかった</p><p class="after">After：AIで概要を調べた後、必ず財団の公式サイトで締切・要件を確認するルールを設けた。AIは「調べるきっかけ」として活用</p></div>
+  <div class="callout teal"><div class="callout-head">✅ ファクトチェックの習慣</div><div class="callout-body"><p>・数字・日付・固有名詞は必ず公式サイト・元の資料で確認</p><p>・「出典を教えて」と聞いてもURLが正しいとは限らない（存在しないURLを作ることも）</p><p>・重要な意思決定に使う情報は、AIはあくまで「仮説の入り口」として使う</p></div></div>
+
+  <div class="h2">約束② 「組織の秘密」は入力しない</div>
+  <div class="callout orange"><div class="callout-head">⚠️ セキュリティの基本ルール</div><div class="callout-body"><p>無料・一般公開版のAIに入力したデータは、AIの改善のために使われる可能性があります。「公園のベンチで大声で社外秘の話をする」と同じリスクです。</p></div></div>
+
+  <!-- ⑥ ソーシャルセクター固有の具体例に刷新 -->
+  <div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 20px"><svg width="100%" viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="0" y="0" width="680" height="280" fill="#f8f9fa"/>
+<text x="340" y="24" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">入力前のセキュリティ確認フロー</text>
+<rect x="270" y="36" width="140" height="36" rx="18" fill="#1E3A5F"/>
+<text x="340" y="59" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#fff">AIに入力したい</text>
+<line x1="340" y1="72" x2="340" y2="100" stroke="#1E3A5F" stroke-width="1.2" marker-end="url(#a3)"/>
+<polygon points="340,100 440,138 340,176 240,138" fill="#FAEEDA" stroke="#854F0B" stroke-width="1"/>
+<text x="340" y="134" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#633806">個人情報・機密情報</text>
+<text x="340" y="152" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#633806">を含む？</text>
+<line x1="240" y1="138" x2="140" y2="138" stroke="#922B21" stroke-width="1.2" marker-end="url(#a3)"/>
+<text x="190" y="130" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#922B21" font-weight="700">はい</text>
+<rect x="40" y="112" width="100" height="52" rx="8" fill="#FDEDEC" stroke="#922B21" stroke-width="1"/>
+<text x="90" y="134" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#922B21">⚠️ 匿名化</text>
+<text x="90" y="153" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#922B21">してから入力</text>
+<line x1="340" y1="176" x2="340" y2="204" stroke="#0F6E56" stroke-width="1.2" marker-end="url(#a3)"/>
+<text x="356" y="194" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#0F6E56" font-weight="700">いいえ</text>
+<polygon points="340,204 440,232 340,260 240,232" fill="#FAEEDA" stroke="#854F0B" stroke-width="1"/>
+<text x="340" y="228" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#633806">公開済み・</text>
+<text x="340" y="246" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#633806">一般情報のみ？</text>
+<line x1="440" y1="232" x2="546" y2="190" stroke="#0F6E56" stroke-width="1.2" marker-end="url(#a3)"/>
+<text x="500" y="204" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#0F6E56" font-weight="700">はい</text>
+<rect x="548" y="162" width="100" height="48" rx="8" fill="#D5F5E3" stroke="#0F6E56" stroke-width="1"/>
+<text x="598" y="183" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#0F6E56">✅ 入力OK</text>
+<text x="598" y="200" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#0F6E56">安心して使える</text>
+<line x1="440" y1="232" x2="546" y2="252" stroke="#922B21" stroke-width="1.2" marker-end="url(#a3)"/>
+<text x="500" y="252" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#922B21" font-weight="700">いいえ</text>
+<rect x="548" y="230" width="100" height="40" rx="8" fill="#FDEDEC" stroke="#922B21" stroke-width="1"/>
+<text x="598" y="248" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#922B21">🚫 入力NG</text>
+<text x="598" y="262" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#922B21">要検討・社内確認</text>
+<line x1="90" y1="164" x2="90" y2="232" stroke="#854F0B" stroke-width="1" stroke-dasharray="4 3"/>
+<line x1="90" y1="232" x2="240" y2="232" stroke="#854F0B" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#a3)"/>
+<text x="164" y="224" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#854F0B">匿名化済みなら</text>
+</svg></div>
+<div class="row2" style="margin:12px 0">
+    <div class="callout orange" style="margin:0">
+      <div class="callout-head">❌ 入力してはいけない情報（具体例）</div>
+      <div class="callout-body">
+        <ul class="risk-list">
+          <li><span class="ri">🚫</span>支援者名・受給者情報・相談者の個人情報</li>
+          <li><span class="ri">🚫</span>未採択の助成金申請書の中身</li>
+          <li><span class="ri">🚫</span>未発表の連携先・協議中の事業計画</li>
+          <li><span class="ri">🚫</span>職員の評価シート・給与・人事情報</li>
+          <li><span class="ri">🚫</span>理事会・評議員会での非公開議事内容</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout teal" style="margin:0">
+      <div class="callout-head">✅ 代わりにこうする</div>
+      <div class="callout-body">
+        <ul class="risk-list">
+          <li><span class="ri">✔</span>「山田様」→「Aさん（50代女性）」に置き換え</li>
+          <li><span class="ri">✔</span>団体名を伏せ「地方のNPO団体」と書く</li>
+          <li><span class="ri">✔</span>金額を「○百万円規模の予算」に抽象化</li>
+          <li><span class="ri">✔</span>採択済み・公開済みの資料のみAIに渡す</li>
+          <li><span class="ri">✔</span>人事情報は絶対にAIに相談しない</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="h2">約束③ 自分の「道具箱」を増やす ─ 著作権にも注意</div>
+  <div class="callout teal"><div class="callout-head">💡 複数のAIを使い分けよう</div><div class="callout-body"><p>・1つのAIでうまくいかなくても、他のAIで試してみる柔軟さが大事</p><p>・文章作成 → ChatGPT / Claude　　最新情報調査 → Gemini　　Office連携 → Copilot</p><p>・AIが生成した画像・文章は著作権に注意。商用利用時は利用規約を必ず確認</p></div></div>
+</div>
+
+
+<!-- 第6章：ツール紹介 -->
+<div class="section" id="sec-6">
+  <div class="sec-header"><div class="sec-num">6</div><div class="sec-title">使えるツール紹介 ─ まず使ってみよう！</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>主要AIツール5つの違いと使い分けが整理できる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>今日からコピペして使えるプロンプトテンプレートが手に入る</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「どのプロンプトをどの場面で使うか」の判断基準が分かる</div>
+    </div>
+  </div>
+  <div class="h2">すぐに使える！おすすめ入門ツール</div>
+  <table class="tbl"><tr><th>ツール</th><th>無料枠</th><th>おすすめの使いどころ</th></tr><tr><td><strong>ChatGPT（OpenAI）</strong></td><td>あり（制限付）</td><td>汎用的な文章作成・壁打ち・アイデア出し</td></tr><tr><td><strong>Claude（Anthropic）</strong></td><td>あり（1日上限）</td><td>長文資料の要約・レポート・安全性が気になる用途</td></tr><tr><td><strong>Gemini（Google）</strong></td><td>あり</td><td>Googleドキュメント連携・最新情報の調査</td></tr><tr><td><strong>Microsoft Copilot</strong></td><td>あり</td><td>Word・Excel・PowerPointで使いたい方</td></tr><tr><td><strong>NotebookLM（Google）</strong></td><td>あり</td><td>資料を読み込ませてQ&A。議事録や調査に最適</td></tr></table>
+
+  <!-- ④ 全プロンプトにコピーボタン -->
+  <div class="h2">📝 今すぐ使えるプロンプト集（ボタンでコピー！）</div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 議事録の整理</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">以下の会議メモから、
+①決定事項 ②今後のアクション ③担当者と期限
+を箇条書きで整理してください。
+
+[ここに会議メモを貼り付け]</div>
+  </div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 メールの敬語チェック</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">以下のメール文を確認して、敬語の誤りや失礼な表現があれば修正してください。
+相手は初めてお会いする他団体の理事です。
+
+[ここにメール文を貼り付け]</div>
+  </div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 SNS投稿文の作成</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">以下のイベント情報をもとに、SNS投稿文を3パターン作成してください。
+・対象者：30〜50代の地域住民
+・文字数：各140字以内
+・トーン：親しみやすく、行動を促す内容
+
+[ここにイベント情報を貼り付け]</div>
+  </div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 企画書へのフィードバック</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">以下の企画書案について、以下の観点からフィードバックしてください。
+①強み・説得力がある点
+②弱み・改善できる点
+③助成財団の審査員が気にするかもしれない点
+
+[ここに企画書を貼り付け]</div>
+  </div>
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">💬 60点→100点プロンプト（B-4のテクニック）</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">今の回答を60点として、100点版に改善してください。
+改善した点も教えてください。</div>
+  </div>
+</div>
+
+
+<!-- 第5章：環境設計の全体像（概観） -->
+<div class="section" id="sec-7">
+  <div class="sec-header"><div class="sec-num">7</div><div class="sec-title">AI活用の環境設計 ─ 4つの要素と全体像</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>AI活用に必要な環境が「4つの要素」で体系的に理解できる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>①〜④それぞれが何をするものか、なぜ必要かが分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>第6〜9章で詳しく学ぶ内容の地図が手に入る</div>
+    </div>
+  </div>
+
+  <div class="callout navy">
+    <div class="callout-head">💡 環境設計とは「AIをもっとうまく使うための準備」のこと</div>
+    <div class="callout-body">
+      <p>生成AIはブラウザがあれば今すぐ使えます。しかし「使い始める」と「使いこなす」の間には大きな差があります。</p>
+      <p>その差を生むのが<strong>環境設計</strong>。ハードウェア・録音・コンテキスト・知識管理の4つの要素を整えることで、AIの出力精度と作業効率が格段に上がります。</p>
+      <p style="margin-top:8px"><strong>まずは全体像を把握し、第6〜9章で各要素を順番に学んでいきましょう。</strong></p>
+    </div>
+  </div>
+
+  <div class="h2">🗺️ 環境設計の全体像 ─ 4つの要素と関係性</div>
+<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 24px"><svg width="100%" viewBox="0 0 680 520" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<rect x="20" y="14" width="640" height="490" rx="14" fill="#EBF5FB" stroke="#1E3A5F" stroke-width="0.5"/>
+<text x="340" y="42" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="15" font-weight="700" fill="#1E3A5F">生成AI活用 環境設計の全体像</text>
+<rect x="40" y="62" width="278" height="192" rx="10" fill="#D5F5E3" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="179" y="86" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#085041">① ハードウェア環境（第6章）</text>
+<rect x="56" y="98" width="246" height="32" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="179" y="118" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">PCスペック</text>
+<rect x="56" y="138" width="116" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="114" y="157" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">マイク</text>
+<rect x="180" y="138" width="122" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="241" y="157" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">イヤホン</text>
+<rect x="56" y="176" width="116" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="114" y="195" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">スマートフォン</text>
+<rect x="180" y="176" width="122" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="241" y="195" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">通信環境</text>
+<rect x="56" y="214" width="246" height="28" rx="6" fill="#e8f8f2" stroke="#ccc" stroke-width="0.5"/>
+<text x="179" y="232" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">回線速度 / Wi-Fi 安定性</text>
+<rect x="362" y="62" width="278" height="192" rx="10" fill="#EEEDFE" stroke="#3C3489" stroke-width="0.5"/>
+<text x="501" y="86" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#26215C">② 録音・文字起こし（第7章）</text>
+<rect x="378" y="98" width="246" height="32" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="501" y="118" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">AI議事録ツール（Notta 等）</text>
+<rect x="378" y="138" width="116" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="436" y="157" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">Zoom / Teams</text>
+<rect x="502" y="138" width="122" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="563" y="157" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">ICレコーダー</text>
+<rect x="378" y="176" width="116" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="436" y="195" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">音声入力</text>
+<rect x="502" y="176" width="122" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="563" y="195" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">自動要約・保存</text>
+<rect x="378" y="214" width="246" height="28" rx="6" fill="#edecfd" stroke="#ccc" stroke-width="0.5"/>
+<text x="501" y="232" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">テキスト化 → AIへ貼り付けて活用</text>
+<rect x="40" y="276" width="278" height="192" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+<text x="179" y="300" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#633806">③ コンテキスト収集・保存（第8章）</text>
+<rect x="56" y="312" width="246" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="179" y="331" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">自組織プロフィール文書</text>
+<rect x="56" y="350" width="116" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="114" y="369" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">過去事例集</text>
+<rect x="180" y="350" width="122" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="241" y="369" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">定型プロンプト集</text>
+<rect x="56" y="390" width="246" height="46" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="179" y="408" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">Notion / Google Drive</text>
+<text x="179" y="426" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#888">貼り付け用データを集約</text>
+<rect x="362" y="276" width="278" height="192" rx="10" fill="#FAECE7" stroke="#922B21" stroke-width="0.5"/>
+<text x="501" y="300" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#712B13">④ 知識管理・AI連携（第9章）</text>
+<rect x="378" y="312" width="246" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="501" y="331" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">NotebookLM（資料 Q&amp;A）</text>
+<rect x="378" y="350" width="116" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="436" y="369" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">Obsidian</text>
+<rect x="502" y="350" width="122" height="30" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="563" y="369" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">Notion AI</text>
+<rect x="378" y="390" width="246" height="46" rx="6" fill="#fff" stroke="#ccc" stroke-width="0.5"/>
+<text x="501" y="408" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" fill="#1C2833">蓄積データ → AIに渡す</text>
+<text x="501" y="426" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#888">コンテキスト強化のループ</text>
+<line x1="318" y1="158" x2="362" y2="158" stroke="#3C3489" stroke-width="1" marker-end="url(#a1)"/>
+<line x1="318" y1="372" x2="362" y2="372" stroke="#854F0B" stroke-width="1" marker-end="url(#a1)"/>
+<line x1="179" y1="254" x2="179" y2="276" stroke="#0F6E56" stroke-width="1" marker-end="url(#a1)"/>
+<line x1="501" y1="254" x2="501" y2="276" stroke="#3C3489" stroke-width="1" marker-end="url(#a1)"/>
+<path d="M618 490 Q340 510 62 490" fill="none" stroke="#1E3A5F" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#a1)"/>
+<text x="340" y="506" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#1E3A5F" opacity="0.7">活用を重ねるほどコンテキストが充実し、AI出力の精度が上がる</text>
+</svg></div>
+
+  <div class="h2">4つの要素 ─ それぞれの役割</div>
+  <table class="tbl">
+    <tr><th style="width:5%">#</th><th style="width:22%">要素</th><th>役割・目的</th><th style="width:15%">詳しく学ぶ</th></tr>
+    <tr>
+      <td style="text-align:center;font-size:18px">🖥️</td>
+      <td><strong>① ハードウェア環境</strong></td>
+      <td>AI活用の土台となるPC・スマホ・通信環境。「高スペック不要」が結論だが、音声入力環境の整備が効果的</td>
+      <td style="text-align:center"><span class="chip chip-teal">第6章</span></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;font-size:18px">🎙️</td>
+      <td><strong>② 録音・文字起こし</strong></td>
+      <td>会議・インタビュー・思考をテキスト化する仕組み。AI議事録ツールの導入が最も時短効果が高い</td>
+      <td style="text-align:center"><span class="chip chip-teal">第7章</span></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;font-size:18px">📂</td>
+      <td><strong>③ コンテキスト収集・保存</strong></td>
+      <td>自組織の情報・過去事例・プロンプト集を整備する。AIに渡す「背景情報の燃料タンク」</td>
+      <td style="text-align:center"><span class="chip chip-teal">第8章</span></td>
+    </tr>
+    <tr>
+      <td style="text-align:center;font-size:18px">🧠</td>
+      <td><strong>④ 知識管理・AI連携</strong></td>
+      <td>蓄積したデータをAIと連携させ、組織専用の「賢いアシスタント」に育てる仕組みを作る</td>
+      <td style="text-align:center"><span class="chip chip-teal">第9章</span></td>
+    </tr>
+  </table>
+
+  <div class="callout teal" style="margin-top:16px">
+    <div class="callout-head">🔁 4つの要素はつながっている</div>
+    <div class="callout-body">
+      <p>①の機材で録音 → ②でテキスト化 → ③で蓄積・整理 → ④でAIと連携 → より精度の高い出力へ</p>
+      <p style="margin-top:6px">一度に全部整える必要はありません。①から順番に、できるものから始めましょう。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 第6章：①ハードウェア環境 -->
+<div class="section" id="sec-8">
+  <div class="sec-header"><div class="sec-num">8</div><div class="sec-title">① ハードウェア環境 ─ PCスペックと機材の選び方</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「高スペックPCは不要」と確信できる根拠が分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>音声入力・マイク選びの具体的な判断基準が得られる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>導入の優先順位が明確になり、何から買えばいいかが決まる</div>
+    </div>
+  </div>
+
+  <div class="h2">🗺️ 環境設定の優先順位</div>
+<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 20px"><svg width="100%" viewBox="0 0 680 286" xmlns="http://www.w3.org/2000/svg">
+<rect x="0" y="0" width="680" height="286" fill="#EBF5FB"/>
+<text x="340" y="22" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">環境設定 ─ 導入の優先順位と効果</text>
+
+<!-- STEP 1 -->
+<rect x="28" y="38" width="148" height="200" rx="10" fill="#D5F5E3" stroke="#0F6E56" stroke-width="1.5"/>
+<rect x="28" y="38" width="148" height="36" rx="10" fill="#0F6E56"/>
+<rect x="28" y="62" width="148" height="12" fill="#0F6E56"/>
+<text x="102" y="62" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#fff">STEP 1｜今すぐ</text>
+<text x="38" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🖥️</text>
+<text x="66" y="100" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#085041">既存PCをそのまま使う</text>
+<text x="38" y="118" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#085041">クラウドAIはブラウザで動く</text>
+<text x="38" y="136" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🎤</text>
+<text x="66" y="140" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#085041">スマホ内蔵マイク</text>
+<text x="38" y="158" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#085041">スマホアプリで音声入力</text>
+<rect x="38" y="202" width="128" height="26" rx="6" fill="#fff" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="102" y="219" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#0F6E56">費用：ゼロ</text>
+
+<!-- STEP 2 -->
+<rect x="214" y="38" width="148" height="200" rx="10" fill="#EEEDFE" stroke="#3C3489" stroke-width="1.5"/>
+<rect x="214" y="38" width="148" height="36" rx="10" fill="#3C3489"/>
+<rect x="214" y="62" width="148" height="12" fill="#3C3489"/>
+<text x="288" y="62" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#fff">STEP 2｜今週</text>
+<text x="224" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">📋</text>
+<text x="252" y="100" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#26215C">AI議事録ツール導入</text>
+<text x="224" y="118" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#26215C">tl;dv（無料）から始める</text>
+<text x="224" y="136" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🎙️</text>
+<text x="252" y="140" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#26215C">音声入力を練習</text>
+<text x="224" y="158" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#26215C">Win+H / Fn×2で起動</text>
+<rect x="224" y="202" width="128" height="26" rx="6" fill="#fff" stroke="#3C3489" stroke-width="0.5"/>
+<text x="288" y="219" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#3C3489">費用：無料〜月2,200円</text>
+
+<!-- STEP 3 -->
+<rect x="400" y="38" width="252" height="200" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="1.5"/>
+<rect x="400" y="38" width="252" height="36" rx="10" fill="#854F0B"/>
+<rect x="400" y="62" width="252" height="12" fill="#854F0B"/>
+<text x="526" y="62" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#fff">STEP 3｜必要に応じて（機材投資）</text>
+<text x="410" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🎧</text>
+<text x="438" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#633806">少人数会議用マイク</text>
+<text x="438" y="112" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#633806">USB会議マイク 5〜15千円</text>
+<text x="410" y="134" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🎤</text>
+<text x="438" y="134" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#633806">ワイヤレスイヤホン（マイク付）</text>
+<text x="438" y="150" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#633806">常時装着で即座に音声入力</text>
+<text x="410" y="172" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🖥️</text>
+<text x="438" y="172" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#633806">PC買い替えは最後の手段</text>
+<text x="438" y="188" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#633806">回線が遅い場合のみ検討</text>
+<rect x="410" y="202" width="232" height="26" rx="6" fill="#fff" stroke="#854F0B" stroke-width="0.5"/>
+<text x="526" y="219" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#854F0B">費用：5,000円〜（必要なものだけ）</text>
+
+<!-- 矢印ボタン：全列描画の後に最前面で描く -->
+<rect x="176" y="104" width="38" height="24" rx="12" fill="#0F6E56"/>
+<text x="195" y="121" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="15" fill="#fff">→</text>
+<rect x="362" y="104" width="38" height="24" rx="12" fill="#854F0B"/>
+<text x="381" y="121" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="15" fill="#fff">→</text>
+
+<!-- 底辺の進行矢印 -->
+<defs><marker id="arr-env" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#1E3A5F" stroke-width="1.5" stroke-linecap="round"/></marker></defs>
+<line x1="50" y1="258" x2="620" y2="258" stroke="#1E3A5F" stroke-width="1.5" marker-end="url(#arr-env)"/>
+<text x="340" y="276" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#1E3A5F" opacity="0.7">環境を整えるほど → 文字起こし精度・作業効率・AI活用の幅が上がる</text>
+</svg></div>
+
+  <div class="h2">A. PCスペック ─「高スペック不要」が実は結論</div>
+  <div class="callout navy"><div class="callout-head">💡 クラウド型AIはブラウザがあれば動く</div><div class="callout-body"><p>ChatGPT・Claude・GeminiなどはPCのスペックにほとんど依存しません。今手元にあるPCで最高品質のAIを利用できます。投資するなら「高性能PC」より「回線速度」や「議事録ツール」の方が効果的です。</p></div></div>
+  <table class="tbl" style="margin-top:12px"><tr><th>スペック項目</th><th>最低ライン</th><th class="teal">快適ライン</th></tr><tr><td class="label">メモリ（RAM）</td><td>8GB（既存PCで可）</td><td class="teal-cell">16GB以上</td></tr><tr><td class="label">ストレージ</td><td>256GB SSD</td><td class="teal-cell">512GB SSD以上</td></tr><tr><td class="label">通信回線</td><td>下り10Mbps以上</td><td class="teal-cell">下り30Mbps以上</td></tr></table>
+
+  <div class="h2">B. 録音マイク ─ 用途と予算で選ぶ</div>
+  <div class="callout slate"><div class="callout-head">💡 まずスマホの内蔵マイクから始めよう</div><div class="callout-body"><p>スマートフォンの内蔵マイクは1対1の会話や音声入力には十分な性能があります。まずこれで試し、不満を感じたら次のステップへ進みましょう。</p></div></div>
+  <table class="tbl"><tr><th>シーン</th><th>おすすめ機材</th><th>予算感</th><th>ポイント</th></tr><tr><td>1対1の対話・インタビュー</td><td><strong>スマートフォン内蔵マイク</strong></td><td>無料</td><td>まずこれで試す</td></tr><tr><td>少人数会議（2〜4名）</td><td><strong>USB会議用マイク</strong></td><td>5,000〜15,000円</td><td>全方向集音で聞き漏らし減</td></tr><tr><td>ハンズフリー音声入力</td><td><strong>マイク付きワイヤレスイヤホン</strong></td><td>10,000〜30,000円</td><td>常時装着で思いついたらすぐ話せる</td></tr><tr><td>多人数の対面会議</td><td><strong>全指向性会議用マイク</strong></td><td>30,000円〜</td><td>複数話者の声を高精度で拾える</td></tr></table>
+
+  <div class="priority" style="margin-top:14px">
+    <div class="priority-item p1"><span class="priority-num">最優先</span><div class="priority-body"><strong>スマホの内蔵マイクで音声入力を試す</strong><span>まず動かしてみることが最優先。費用ゼロ</span></div></div>
+    <div class="priority-item p2"><span class="priority-num">次に</span><div class="priority-body"><strong>会議の多い方はUSBマイクを検討</strong><span>文字起こし精度が大幅に上がる</span></div></div>
+    <div class="priority-item p3"><span class="priority-num">必要に応じて</span><div class="priority-body"><strong>PC買い替えは最後の手段 / 通信回線の改善を先に</strong><span>AI活用においてPCスペックの影響は小さい</span></div></div>
+  </div>
+</div>
+
+<!-- 第7章：②録音・文字起こし -->
+<div class="section" id="sec-9">
+  <div class="sec-header"><div class="sec-num">9</div><div class="sec-title">② 録音・文字起こし ─ 会議・思考をテキスト化する</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>AI議事録ツールの使い分けと導入優先順位が整理できる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>スマホ・PCそれぞれの音声入力の始め方が分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>録音したテキストをAIに渡して活用するフローが身につく</div>
+    </div>
+  </div>
+
+  <div class="callout slate"><div class="callout-head">🎯 この要素が最も時短効果が高い</div><div class="callout-body"><p>録音→文字起こし→AIに渡す、この流れを整えるだけで、議事録作成・アイデアメモ・インタビュー分析の作業時間が劇的に短縮されます。導入コストも低く、<strong>最初に整えるべき要素</strong>です。</p></div></div>
+
+  <div class="h2">A. AI議事録ツールの活用</div>
+  <div class="callout slate"><div class="callout-head">📋 録音〜議事録完成までのフロー</div><div class="callout-body"><p><strong>1. 会議中：</strong>Notta等のAI議事録ツールを起動（Zoom/Teamsなら自動参加）</p><p><strong>2. 会議後：</strong>自動生成された文字起こしテキストをコピー</p><p><strong>3. AIへ貼り付け：</strong>「決定事項・課題・アクション・担当者を箇条書きで整理して」→ 完成</p></div></div>
+  <table class="tbl" style="margin-top:12px"><tr><th>ツール名</th><th>費用感</th><th>こんな場面に</th></tr><tr><td><strong>Notta</strong></td><td>無料〜月2,200円</td><td>日本語の社内会議（精度No.1）</td></tr><tr><td><strong>CLOVA Note</strong></td><td>無料〜</td><td>対面会議・インタビューの録音</td></tr><tr><td><strong>Fireflies</strong></td><td>無料〜月$10</td><td>Zoom/Teamsに自動参加したい</td></tr><tr><td><strong>tl;dv</strong></td><td>無料（無制限）</td><td>まず試してみたい方</td></tr><tr><td><strong>Zoom内蔵</strong></td><td>Zoom有料プラン付属</td><td>Zoom利用者はまずこれ</td></tr></table>
+
+  <div class="h2">B. 音声入力 ─ テキスト入力の壁をなくす</div>
+  <div class="row2">
+    <div class="callout slate" style="margin:0"><div class="callout-head">スマホからの音声入力（最も手軽）</div><div class="callout-body"><p>1. ChatGPT/ClaudeのスマホアプリのマイクボタンをON</p><p>2. 話しかけるだけでテキストに変換・送信</p><p>3. 参考資料の確認はPCで見ながら使うと効率的</p><p style="margin-top:8px"><strong>→ 移動中・外出先でのアイデアメモにも最適</strong></p></div></div>
+    <div class="callout navy" style="margin:0"><div class="callout-head">PCからの音声入力</div><div class="callout-body"><p>1. ChromeブラウザのマイクボタンからAIに話しかける</p><p>2. Windows：Win+H キーで音声入力が起動</p><p>3. Mac：Fnキー2回押しで音声入力が起動</p><p style="margin-top:8px"><strong>→ キーボード入力が苦手な方に特におすすめ</strong></p></div></div>
+  </div>
+
+  <div class="priority" style="margin-top:14px">
+    <div class="priority-item p1"><span class="priority-num">最優先</span><div class="priority-body"><strong>AI議事録ツールを1つ試す</strong><span>議事録作業が最も劇的に変わる</span></div></div>
+    <div class="priority-item p2"><span class="priority-num">次に</span><div class="priority-body"><strong>スマホアプリの音声入力に慣れる</strong><span>テキスト入力の手間を大幅に削減</span></div></div>
+  </div>
+</div>
+
+<!-- 第8章：③コンテキスト収集・保存 -->
+<div class="section" id="sec-10">
+  <div class="sec-header"><div class="sec-num">10</div><div class="sec-title">③ コンテキスト収集・保存 ─ AIの精度を上げるデータ整備術</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>なぜ同じ質問でもAIの回答の質に差が出るのかが分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「今日から作れる」3種類のコンテキストデータの中身が具体的に分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>収集したデータをどこに保存してAIに渡すかが分かる</div>
+    </div>
+  </div>
+
+  <div class="callout navy"><div class="callout-head">なぜコンテキストが重要なのか</div><div class="callout-body"><p>AIは「人類全体の知識」は持っているが、「あなたの組織のこと」は何も知らない。</p><p>背景情報を毎回渡すことで、AIは「他所の団体の話」ではなく「自分たちの話」として答えてくれる。</p><p style="margin-top:8px"><strong>コンテキストの充実度 = AI出力のカスタマイズ精度。最も費用対効果の高いAI活用の準備作業。</strong></p></div></div>
+
+  <div class="h2">🗺️ コンテキスト強化のサイクル</div>
+<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 20px"><svg width="100%" viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="b2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="680" height="280" fill="#FAEEDA" rx="12"/>
+<text x="340" y="24" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#633806">コンテキスト強化のサイクル ─ 使えば使うほど精度が上がる</text>
+<circle cx="340" cy="148" r="48" fill="#854F0B" opacity="0.9"/>
+<text x="340" y="143" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="20">🤖</text>
+<text x="340" y="163" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#fff">AI出力の</text>
+<text x="340" y="179" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#fff">精度向上</text>
+<rect x="36" y="42" width="152" height="72" rx="10" fill="#fff" stroke="#854F0B" stroke-width="1"/>
+<text x="56" y="68" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="22">📂</text>
+<text x="86" y="68" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#633806">① 収集する</text>
+<text x="56" y="88" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">組織プロフィール</text>
+<text x="56" y="104" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">過去事例・申請書</text>
+<rect x="492" y="42" width="152" height="72" rx="10" fill="#fff" stroke="#854F0B" stroke-width="1"/>
+<text x="512" y="68" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="22">🗂️</text>
+<text x="542" y="68" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#633806">② 整備する</text>
+<text x="512" y="88" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">Googleドライブ</text>
+<text x="512" y="104" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">Notion / NotebookLM</text>
+<rect x="492" y="172" width="152" height="72" rx="10" fill="#fff" stroke="#854F0B" stroke-width="1"/>
+<text x="512" y="198" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="22">💬</text>
+<text x="542" y="198" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#633806">③ AIに渡す</text>
+<text x="512" y="218" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">依頼の冒頭に貼り付け</text>
+<text x="512" y="234" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">「この文体を参考に」</text>
+<rect x="36" y="172" width="152" height="72" rx="10" fill="#fff" stroke="#854F0B" stroke-width="1"/>
+<text x="56" y="198" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="22">📝</text>
+<text x="86" y="198" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#633806">④ 蓄積する</text>
+<text x="56" y="218" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">成功プロンプトを記録</text>
+<text x="56" y="234" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">チームで共有する</text>
+<line x1="188" y1="78" x2="292" y2="118" stroke="#854F0B" stroke-width="1.5" marker-end="url(#b2)"/>
+<line x1="492" y1="78" x2="392" y2="118" stroke="#854F0B" stroke-width="1.5" marker-end="url(#b2)"/>
+<line x1="492" y1="208" x2="392" y2="175" stroke="#854F0B" stroke-width="1.5" marker-end="url(#b2)"/>
+<line x1="188" y1="208" x2="292" y2="175" stroke="#854F0B" stroke-width="1.5" marker-end="url(#b2)"/>
+<path d="M112 114 Q100 148 112 172" fill="none" stroke="#854F0B" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#b2)"/>
+<path d="M568 114 Q580 148 568 172" fill="none" stroke="#854F0B" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#b2)"/>
+<text x="340" y="264" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#633806" opacity="0.8">繰り返すほど「組織専用AI」に近づく ─ 継続が最大の投資</text>
+</svg></div>
+
+  <div class="h2">収集すべきデータの3カテゴリー</div>
+  <div class="callout navy" style="margin-bottom:10px"><div class="callout-head">カテゴリー1：自組織の基本情報 ─ 一度作ったら使い回せる土台</div><div class="callout-body"><p><strong>何を収集・作成するか：</strong></p><p>・組織概要文（300〜500字）：設立年・ミッション・活動内容・対象者・エリア</p><p>・よく使うトーン・表現スタイルの例文</p><p>・主要なステークホルダーの関係性メモ</p><p>・組織固有のキーワード・専門用語集</p><p style="margin-top:8px"><strong>どう使うか：</strong>AIへの依頼の冒頭に毎回貼り付けるだけで、AIが自組織のことをわかった上で答えてくれる。</p></div></div>
+  <div class="callout slate" style="margin-bottom:10px"><div class="callout-head">カテゴリー2：過去事例・実績 ─ AIの精度を上げる最強のデータ</div><div class="callout-body"><p><strong>何を収集・整備するか：</strong></p><p>・採択済みの助成金申請書（文体・表現・構成の参考に）</p><p>・活動報告書・年次報告書のテキスト（数年分）</p><p>・メディア掲載文・プレスリリース</p><p>・支援者・参加者の声（個人情報は必ず匿名化）</p><p style="margin-top:8px"><strong>どう使うか：</strong>「この採択申請書の文体を参考に書いて」と一緒に渡すと、組織らしい文章が一発で出てくる。</p></div></div>
+  <div class="callout purple" style="margin-bottom:10px"><div class="callout-head">カテゴリー3：プロンプトのテンプレート集 ─ チームの共有資産</div><div class="callout-body"><p><strong>何を蓄積・共有するか：</strong></p><p>・うまくいったプロンプトを記録（何を聞いて・何が出てきたか）</p><p>・用途別テンプレート：議事録整理用・申請文下書き用・SNS投稿用など</p><p>・失敗したプロンプトも記録（なぜうまくいかなかったかのメモ付き）</p><p style="margin-top:8px"><strong>どう使うか：</strong>GoogleドライブやNotionに「プロンプト集」フォルダを作り、全員が参照・追加できる状態に。</p></div></div>
+
+  <div class="h2">今日から始めるコンテキスト整備 3ステップ</div>
+  <div class="steps">
+    <div class="step-box s1"><span class="step-badge">今日</span><div><strong>「組織プロフィール文（300字）」をGoogleドキュメントに書く</strong><span>AIへの依頼の冒頭に毎回貼り付けるだけで出力精度が大幅アップ</span></div></div>
+    <div class="step-box s2"><span class="step-badge">今週</span><div><strong>採択済み申請書・活動報告書を「AI素材フォルダ」に格納する</strong><span>「この文体を参考に書いて」と一緒に渡すだけで組織らしい文章に</span></div></div>
+    <div class="step-box s3"><span class="step-badge">今月</span><div><strong>NotebookLMに資料を読み込ませて「うちの団体について」質問してみる</strong><span>自分たちの活動の強み・課題をAIが整理してくれる体験ができる</span></div></div>
+  </div>
+</div>
+
+<!-- 第9章：④知識管理・AI連携 -->
+<div class="section" id="sec-11">
+  <div class="sec-header"><div class="sec-num">11</div><div class="sec-title">④ 知識管理・AI連携 ─ 組織専用アシスタントをつくる</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>Notion・Googleドライブ・NotebookLMの使い分け判断ができる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>蓄積したデータをAIと連携させる具体的な方法が分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>③で集めたコンテキストを「使える形」で維持・活用できるようになる</div>
+    </div>
+  </div>
+
+  <div class="callout navy"><div class="callout-head">💡 ③で集めたデータを「活用できる形」に整える</div><div class="callout-body"><p>第8章（③コンテキスト収集）で集めたデータは、適切に管理・連携することで初めて効果を発揮します。この章では「どこに保存して、どうAIに渡すか」の仕組みを整えます。</p></div></div>
+
+  <div class="h2">保存・管理ツール選び</div>
+  <table class="tbl"><tr><th>ツール</th><th>難易度</th><th>向いている使い方</th><th>AIとの連携方法</th></tr><tr><td><strong>Googleドライブ</strong></td><td>★ 簡単</td><td>プロンプト集・素材をチームで共有</td><td>フォルダ内のテキストをコピペしてAIに渡す</td></tr><tr><td><strong>Notion</strong></td><td>★★ 普通</td><td>情報を整理・DB化して管理</td><td>Notion AI連携でページ内容をそのまま活用可</td></tr><tr><td><strong>NotebookLM</strong></td><td>★ 簡単</td><td>複数資料を読み込んでQ&A</td><td>資料を登録するだけでAIが回答してくれる</td></tr><tr><td><strong>Obsidian</strong></td><td>★★★ 上級</td><td>ローカル保存型。個人知識管理</td><td>AIに「このフォルダを読んで」と渡せる</td></tr></table>
+
+  <div class="h2">NotebookLM ─ 最もすぐ効果を実感できるツール</div>
+  <div class="callout slate"><div class="callout-head">📚 NotebookLMで「組織専用AI」を体験する手順</div><div class="callout-body">
+    <p><strong>1. notebooklm.google.com にアクセス（無料・Googleアカウントで利用可）</strong></p>
+    <p><strong>2. 資料をアップロード：</strong>活動報告書・申請書・議事録などのPDFやDocを追加</p>
+    <p><strong>3. 質問してみる：</strong>「この団体の強みを3つ教えて」「過去の申請書と同じトーンで新しい説明文を書いて」</p>
+    <p style="margin-top:8px">→ アップロードした資料だけをもとに回答してくれる「自組織専用のAI」が完成</p>
+  </div></div>
+
+  <div class="callout amber" style="margin-top:12px"><div class="callout-head">🔄 ①〜④ のサイクルを回し続けることが「AI活用の本質」</div><div class="callout-body">
+    <p>環境を一度整えたら終わりではありません。</p>
+    <p>活用するたびに新しいプロンプトを記録し、成功事例を蓄積し、データを更新していく。このサイクルを回し続けることで、AIは使えば使うほど「自分の組織に合った道具」に育っていきます。</p>
+  </div></div>
+</div>
+
+
+<!-- 第6章：エージェント型AI -->
+<div class="section" id="sec-12">
+  <div class="sec-header"><div class="sec-num">12</div><div class="sec-title">エージェント型AI ─ チャット型との違いと次の段階</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>チャット型とエージェント型の本質的な違いが一言で言える</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>「今すぐ体験できる」エージェント機能が分かり、試せる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>エージェントを使う際のリスクと注意点が整理できる</div>
+    </div>
+  </div>
+
+  <div class="h2">🗺️ AI活用の進化ロードマップ</div>
+<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 20px"><svg width="100%" viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arr-road" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<rect x="0" y="0" width="680" height="240" fill="#f8f9fa"/>
+<text x="340" y="22" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">AI活用の進化ロードマップ ─ 今どこにいるか？</text>
+
+<!-- Stage 1：チャット型 -->
+<rect x="28" y="34" width="178" height="168" rx="10" fill="#EBF5FB" stroke="#1E3A5F" stroke-width="2"/>
+<rect x="28" y="34" width="178" height="36" rx="10" fill="#1E3A5F"/>
+<rect x="28" y="56" width="178" height="14" fill="#1E3A5F"/>
+<text x="117" y="58" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" font-weight="700" fill="#fff">Stage 1｜チャット型 ← 今ここ</text>
+<text x="38" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="18">💬</text>
+<text x="62" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#1E3A5F">質問→回答</text>
+<text x="38" y="114" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">人間が毎回指示する</text>
+<text x="38" y="130" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">ChatGPT / Claude 等</text>
+<!-- 習熟度バー -->
+<rect x="36" y="148" width="162" height="26" rx="8" fill="#D6E4F0"/>
+<rect x="36" y="148" width="162" height="26" rx="8" fill="#1E3A5F" opacity="0.8"/>
+<text x="117" y="165" text-anchor="middle" dominant-baseline="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="9" fill="#fff">習熟度 ██████████ 高い</text>
+
+<!-- 矢印 1→2 -->
+<line x1="206" y1="117" x2="238" y2="117" stroke="#3C3489" stroke-width="2" marker-end="url(#arr-road)"/>
+
+<!-- Stage 2：エージェント型 -->
+<rect x="240" y="34" width="200" height="168" rx="10" fill="#EEEDFE" stroke="#3C3489" stroke-width="2"/>
+<rect x="240" y="34" width="200" height="36" rx="10" fill="#3C3489"/>
+<rect x="240" y="56" width="200" height="14" fill="#3C3489"/>
+<text x="340" y="58" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" font-weight="700" fill="#fff">Stage 2｜エージェント型 ← 次の目標</text>
+<text x="250" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="18">🤖</text>
+<text x="274" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#3C3489">目標を渡すと自律実行</text>
+<text x="250" y="114" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">計画→ツール操作→完了</text>
+<text x="250" y="130" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#555">Deep Research 等</text>
+<!-- 習熟度バー -->
+<rect x="248" y="148" width="184" height="26" rx="8" fill="#ddd"/>
+<rect x="248" y="148" width="92" height="26" rx="8" fill="#3C3489" opacity="0.8"/>
+<text x="340" y="165" text-anchor="middle" dominant-baseline="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="9" fill="#3C3489">習熟度 █████░░░░░ 発展中</text>
+
+<!-- 矢印 2→3 -->
+<line x1="440" y1="117" x2="472" y2="117" stroke="#854F0B" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arr-road)"/>
+
+<!-- Stage 3：自律型AI -->
+<rect x="474" y="34" width="180" height="168" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="1.5" stroke-dasharray="6 3"/>
+<rect x="474" y="34" width="180" height="22" rx="10" fill="#854F0B" opacity="0.8"/>
+<rect x="474" y="50" width="180" height="20" fill="#854F0B" opacity="0.8"/>
+<text x="564" y="58" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" font-weight="700" fill="#fff">Stage 3｜自律型AI（近未来）</text>
+<text x="484" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="18">🚀</text>
+<text x="508" y="96" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="12" font-weight="700" fill="#854F0B">業務全体を自動化</text>
+<text x="484" y="114" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#888">複数エージェントが連携</text>
+<text x="484" y="130" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" fill="#888">人間は承認・監督のみ</text>
+<!-- 習熟度バー -->
+<rect x="482" y="148" width="164" height="26" rx="8" fill="#ddd"/>
+<rect x="482" y="148" width="28" height="26" rx="8" fill="#854F0B" opacity="0.5"/>
+<text x="564" y="165" text-anchor="middle" dominant-baseline="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="9" fill="#854F0B">習熟度 ██░░░░░░░░ まだ先</text>
+
+<!-- 位置ラベル -->
+<text x="117" y="220" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#1E3A5F" font-weight="700">📍 この勉強会で習得</text>
+<text x="340" y="220" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#3C3489" font-weight="700">🎯 今後の目標</text>
+<text x="564" y="220" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#854F0B" opacity="0.8">⏳ 動向を追い続ける</text>
+</svg></div>
+<!-- ② 一言ヒーロー：最上部に大きく対比 -->
+  <div class="agent-hero">
+    <div style="font-size:11px;font-weight:700;opacity:.6;margin-bottom:10px;letter-spacing:.06em">一言でいうと</div>
+    <div class="agent-hero-row">
+      <div class="agent-hero-col chat">
+        <div class="agent-hero-label">チャット型（今）</div>
+        <p>「答えを返す」AI<br>情報を渡すが、実行はしない</p>
+      </div>
+      <div class="agent-hero-vs">VS</div>
+      <div class="agent-hero-col agent">
+        <div class="agent-hero-label">エージェント型（次の段階）</div>
+        <p>「業務を実行する」AI<br>計画を立て、ツールを動かして完結させる</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="h2">A. フロー図で見る違い</div>
+  <div class="compare-wrap">
+    <div class="compare-col chat"><div class="compare-col-head"><div class="badge">現在の主流</div><h3>チャット型</h3><p>ChatGPT / Claude / Gemini 等</p></div><div class="compare-col-body"><div class="flow"><div class="flow-step"><div class="flow-num">1</div><div class="flow-text"><strong>人間が質問・指示を入力</strong></div></div><div class="flow-arrow">↓</div><div class="flow-step"><div class="flow-num">2</div><div class="flow-text"><strong>AIが回答・テキストを生成</strong></div></div><div class="flow-arrow">↓</div><div class="flow-step"><div class="flow-num">3</div><div class="flow-text"><strong>人間が次の行動を実行</strong></div></div></div><ul class="feat-list"><li><span>💬</span>1問1答の「単発応答」</li><li><span>📖</span>情報を「返す」だけ（読み取り専用）</li><li><span>🔒</span>外部ツール・システムは操作しない</li><li><span>✅</span>今すぐ使える・導入コストが低い</li></ul><div class="tag-area"><div class="tag-area-label">向いている業務</div><div class="tags"><span class="tag">文章作成</span><span class="tag">要約</span><span class="tag">アイデア出し</span><span class="tag">翻訳</span></div></div></div></div>
+    <div class="compare-col agent"><div class="compare-col-head"><div class="badge">進化形・次の段階</div><h3>エージェント型AI</h3><p>Operator / Deep Research 等</p></div><div class="compare-col-body"><div class="flow"><div class="flow-step teal"><div class="flow-num">1</div><div class="flow-text"><strong>人間が「目標」を伝えるだけ</strong></div></div><div class="flow-arrow">↓</div><div class="flow-step teal"><div class="flow-num">2</div><div class="flow-text"><strong>AIが自ら計画を立てる</strong></div></div><div class="flow-arrow">↓</div><div class="flow-step teal"><div class="flow-num">3</div><div class="flow-text"><strong>ツール・システムを操作・実行</strong></div></div><div class="flow-arrow">↓</div><div class="flow-step teal"><div class="flow-num">4</div><div class="flow-text"><strong>結果を評価・改善して完了</strong><span>↻ このループを繰り返す</span></div></div></div><ul class="feat-list"><li><span>🤖</span>複数ステップを「自律的に」実行</li><li><span>⚙️</span>外部システムを実際に操作</li><li><span>🙋</span>人間は「ゴール指定」と「承認」のみ</li><li><span>⚠️</span>導入・設計には専門知識が必要</li></ul><div class="tag-area"><div class="tag-area-label">向いている業務</div><div class="tags"><span class="tag">複雑なリサーチ</span><span class="tag">自動実行</span><span class="tag">横断的作業</span></div></div></div></div>
+  </div>
+  <div class="h2">B. 項目別の比較</div>
+  <table class="tbl"><tr><th>比較項目</th><th>チャット型</th><th class="teal">エージェント型</th></tr><tr><td class="label">動き方</td><td>質問に1回答えて終わり</td><td class="teal-cell">目標に向かって自律的に行動し続ける</td></tr><tr><td class="label">人間の関わり方</td><td>毎回指示を出す必要がある</td><td class="teal-cell">ゴールを伝えるだけ。完了まで自動で進む</td></tr><tr><td class="label">複数ステップの処理</td><td>1回ずつ対話が必要</td><td class="teal-cell">調査→分析→作成→送信まで連続実行</td></tr><tr><td class="label">外部ツール連携</td><td>基本的に連携しない</td><td class="teal-cell">カレンダー・メール・システムを直接操作</td></tr><tr><td class="label">今すぐ使えるか</td><td>◎ 無料登録ですぐ使える</td><td class="teal-cell">△ 一部サービスで体験可</td></tr><tr><td class="label">主なリスク</td><td>ハルシネーション・情報の正確性</td><td class="teal-cell">誤動作による実害・権限設定のミス</td></tr></table>
+  <div class="h2">C. 具体的な活用イメージ ─ Before / After</div>
+  <div class="cards">
+    <div class="card slate"><h3>📋 複雑なリサーチ＆レポート作成</h3><p class="before">チャット型：情報のリストを返すだけ。自分でサイトを調べて整理が必要</p><p class="after">エージェント型：複数サイトを自動収集→比較表作成→分析→報告書として出力まで全自動</p></div>
+    <div class="card slate"><h3>📬 メール管理の自動化</h3><p class="before">チャット型：返信文を生成してくれるが、送信は自分でやる</p><p class="after">エージェント型：Gmailに接続→重要メール分類→返信文生成→承認後に自動送信</p></div>
+    <div class="card slate"><h3>📊 助成金の下調べ＆準備支援</h3><p class="before">チャット型：一般的な情報を返すが、実際の締切確認は自分でサイトを見る</p><p class="after">エージェント型：複数サイトを巡回→自組織の条件と照合→締切一覧と修正案を自動出力</p></div>
+  </div>
+  <div class="h2">D. 今すぐ体験できるサービス</div>
+  <table class="tbl"><tr><th>サービス名</th><th>使いやすさ</th><th>できること</th></tr><tr><td><strong>Deep Research</strong><br><span style="font-size:11px">ChatGPT・Gemini</span></td><td><span class="chip chip-teal">今すぐ試せる</span></td><td>テーマを伝えると複数ソースを自動収集・分析・レポート化</td></tr><tr><td><strong>Operator</strong><br><span style="font-size:11px">ChatGPT有料版</span></td><td><span class="chip chip-teal">今すぐ試せる</span></td><td>ブラウザを代わりに操作。フォーム入力・情報収集を自動実行</td></tr><tr><td><strong>Notion AI</strong></td><td><span class="chip chip-teal">今すぐ試せる</span></td><td>複数ページを参照し、議事録整形やページ横断Q&Aが可能</td></tr><tr><td><strong>Microsoft 365 Copilot</strong></td><td><span class="chip chip-navy">法人向け</span></td><td>Word・Excel・OutlookをまたいでAIが業務フローを自動実行</td></tr></table>
+  <div class="callout orange" style="margin-top:14px"><div class="callout-head">⚠️ エージェント型AIを使うときの注意点</div><div class="callout-body"><p>・最初は重要度の低い業務から試す（誤動作しても影響が少ないものを選ぶ）</p><p>・エージェントに与える権限は最小限に。重要ファイルへの無制限アクセスは避ける</p><p>・現時点では「人間の確認・承認を組み込む設計」が安全。完全自動は過信禁物</p><p>・チャット型以上に機密情報・個人情報の取り扱いに注意</p></div></div>
+  <div class="callout slate" style="margin-top:12px"><div class="callout-head">まとめ：チャット型を使いこなしながらエージェント型を学ぶ</div><div class="callout-body"><p>現在の主流はチャット型。まずこれを使いこなすことが最優先。Deep ResearchやNotion AIなどエージェント的な機能は今すぐ体験できる。近い将来、業務の多くがエージェントで自動化される時代が来るので、動向を追い続けよう。</p></div></div>
+</div>
+
+<!-- 第13章：この資料のつくり方 -->
+<div class="section" id="sec-13">
+  <div class="sec-header"><div class="sec-num">13</div><div class="sec-title">この資料のつくり方 ─ AIと人間の共同制作プロセス</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>この資料がどんなプロセスで作られたか、全体像が分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>人間（製作者）が担った部分とClaudeが担った部分の違いが分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>実際に使われたプロンプトの例から、AI活用のリアルな感覚が掴める</div>
+    </div>
+  </div>
+
+  <div class="callout navy">
+    <div class="callout-head">💡 この資料自体がAI活用の実例です</div>
+    <div class="callout-body">
+      <p>この勉強会資料は、<strong>人間（製作者）とClaude（AI）が対話を重ねながら共同制作</strong>したものです。</p>
+      <p style="margin-top:8px">一度の指示で完成したのではなく、対話を繰り返して少しずつ改善してきました。そのプロセス自体が、AI活用のリアルな事例として参考になるはずです。</p>
+    </div>
+  </div>
+
+  <!-- 全体プロセスの流れ -->
+  <div class="h2">🗺️ 制作プロセスの全体像</div>
+  <div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 10px rgba(0,0,0,.08);margin:0 0 20px">
+  <svg width="100%" viewBox="0 0 680 206" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="680" height="206" fill="#EBF5FB"/>
+  <text x="340" y="20" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">制作プロセスの全体像</text>
+
+  <!-- STEP 1：コンテンツ設計 x=14, w=152 -->
+  <rect x="14" y="32" width="152" height="144" rx="10" fill="#fff" stroke="#1E3A5F" stroke-width="1.5"/>
+  <rect x="14" y="32" width="152" height="34" rx="10" fill="#1E3A5F"/>
+  <rect x="14" y="52" width="152" height="14" fill="#1E3A5F"/>
+  <text x="90" y="55" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" font-weight="700" fill="#fff">STEP 1｜コンテンツ設計</text>
+  <text x="26" y="88" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="17">👤</text>
+  <text x="48" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#1E3A5F">人間が担当</text>
+  <text x="26" y="110" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">Geminiで内容整理</text>
+  <text x="26" y="126" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">テーマ・構成の判断</text>
+  <text x="26" y="142" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">目的・対象者の設定</text>
+  <rect x="22" y="156" width="136" height="12" rx="6" fill="#1E3A5F" opacity="0.15"/>
+  <text x="90" y="166" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="9" fill="#1E3A5F" font-weight="700">Gemini使用</text>
+
+  <!-- STEP 2：HTML構築 x=178, w=152 -->
+  <rect x="178" y="32" width="152" height="144" rx="10" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/>
+  <rect x="178" y="32" width="152" height="34" rx="10" fill="#0F6E56"/>
+  <rect x="178" y="52" width="152" height="14" fill="#0F6E56"/>
+  <text x="254" y="55" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" font-weight="700" fill="#fff">STEP 2｜HTML構築</text>
+  <text x="190" y="88" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="17">🤖</text>
+  <text x="212" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#0F6E56">Claudeが担当</text>
+  <text x="190" y="110" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">HTML全体の構築</text>
+  <text x="190" y="126" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">SVG図10枚の生成</text>
+  <text x="190" y="142" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">デザイン・色体系の設計</text>
+  <rect x="186" y="156" width="136" height="12" rx="6" fill="#0F6E56" opacity="0.2"/>
+  <text x="254" y="166" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="9" fill="#0F6E56" font-weight="700">Claude使用（初稿）</text>
+
+  <!-- STEP 3：改善・反復 x=342, w=152 -->
+  <rect x="342" y="32" width="152" height="144" rx="10" fill="#fff" stroke="#854F0B" stroke-width="1.5"/>
+  <rect x="342" y="32" width="152" height="34" rx="10" fill="#854F0B"/>
+  <rect x="342" y="52" width="152" height="14" fill="#854F0B"/>
+  <text x="418" y="55" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" font-weight="700" fill="#fff">STEP 3｜改善・反復</text>
+  <text x="354" y="88" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="17">🔄</text>
+  <text x="376" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#854F0B">人間が判断・指示</text>
+  <text x="354" y="110" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">章順の入れ替え</text>
+  <text x="354" y="126" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">内容の追加・修正</text>
+  <text x="354" y="142" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">70〜80回の対話</text>
+  <rect x="350" y="156" width="136" height="12" rx="6" fill="#854F0B" opacity="0.2"/>
+  <text x="418" y="166" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="9" fill="#854F0B" font-weight="700">Claude使用（反復）</text>
+
+  <!-- STEP 4：完成 x=506, w=160 -->
+  <rect x="506" y="32" width="160" height="144" rx="10" fill="#fff" stroke="#3C3489" stroke-width="1.5"/>
+  <rect x="506" y="32" width="160" height="34" rx="10" fill="#3C3489"/>
+  <rect x="506" y="52" width="160" height="14" fill="#3C3489"/>
+  <text x="586" y="55" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" font-weight="700" fill="#fff">STEP 4｜完成・確認</text>
+  <text x="518" y="88" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="17">✅</text>
+  <text x="540" y="92" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="11" font-weight="700" fill="#3C3489">人間が最終確認</text>
+  <text x="518" y="110" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">内容・品質の最終確認</text>
+  <text x="518" y="126" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">公開・配布の判断</text>
+  <text x="518" y="142" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#555">責任は人間が持つ</text>
+  <rect x="514" y="156" width="144" height="12" rx="6" fill="#3C3489" opacity="0.2"/>
+  <text x="586" y="166" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="9" fill="#3C3489" font-weight="700">人間が最終責任</text>
+
+  <!-- 矢印ボタン（全ボックスの後に最前面描画） -->
+  <rect x="166" y="92" width="12" height="24" rx="6" fill="#1E3A5F"/>
+  <text x="172" y="108" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#fff">›</text>
+  <rect x="330" y="92" width="12" height="24" rx="6" fill="#0F6E56"/>
+  <text x="336" y="108" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#fff">›</text>
+  <rect x="494" y="92" width="12" height="24" rx="6" fill="#854F0B"/>
+  <text x="500" y="108" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="13" fill="#fff">›</text>
+
+  <text x="340" y="196" text-anchor="middle" font-family="Hiragino Kaku Gothic ProN,Meiryo,sans-serif" font-size="10" fill="#1E3A5F" opacity="0.7">STEP2〜3を繰り返しながら完成度を高める ─ 一度で完璧を目指さないのがコツ</text>
+</svg>
+  </div>
+
+  <!-- 役割分担 -->
+  <div class="h2">👤 人間がやったこと ／ 🤖 Claudeがやったこと</div>
+  <table class="tbl">
+    <tr><th style="width:50%">👤 人間（製作者）が担った部分</th><th style="width:50%">🤖 Claude（AI）が担った部分</th></tr>
+    <tr>
+      <td>
+        <p><strong>企画・構成の判断</strong>：誰に、何のための資料かを決める</p>
+        <p style="margin-top:6px"><strong>コンテンツの素材収集</strong>：Geminiで3つのプロンプトを使って勉強会の内容を整理</p>
+        <p style="margin-top:6px"><strong>参考資料の提供</strong>：X投稿・LayerX羅針盤・技術スライドのURLを入力</p>
+        <p style="margin-top:6px"><strong>改善の指示</strong>：「章順を入れ替えて」「色使いを改善して」「繋ぎ文を入れて」などの具体的な要求</p>
+        <p style="margin-top:6px"><strong>品質の確認・判断</strong>：出力を見て「これでいい」「ここを直して」を繰り返す</p>
+        <p style="margin-top:6px"><strong>最終責任</strong>：内容の正確性・倫理的な適切さの確認</p>
+      </td>
+      <td>
+        <p><strong>HTML・CSS全体の設計・構築</strong>：サイドバーナビ、セクション構造、レスポンシブ対応</p>
+        <p style="margin-top:6px"><strong>SVG図の作成</strong>：10枚の図（マップ・フロー・サイクル図など）を生成・修正</p>
+        <p style="margin-top:6px"><strong>文章の執筆</strong>：各章の説明文・callout・事例・繋ぎ文</p>
+        <p style="margin-top:6px"><strong>色体系の設計</strong>：6色の意味付け（teal=推奨・slate=プロセスなど）</p>
+        <p style="margin-top:6px"><strong>コードの修正・デバッグ</strong>：SVGの崩れ修正、章の入れ替え、ID整合</p>
+        <p style="margin-top:6px"><strong>参考資料の内容分析</strong>：URLから内容を取得し、資料に反映する箇所を抽出</p>
+      </td>
+    </tr>
+  </table>
+
+  <!-- コンテンツ素材の作り方 -->
+  <div class="h2">📝 STEP 1：Geminiで勉強会コンテンツの素材を作る</div>
+  <div class="callout slate">
+    <div class="callout-head">使ったツール：Gemini ／ 使い方：3つのプロンプトを順番に入力</div>
+    <div class="callout-body">
+      <p>資料の中身（何を教えるか）は、まずGeminiを使って情報を整理しました。以下の3つのプロンプトを順番に入れることで、勉強会の骨格となるコンテンツが揃いました。</p>
+    </div>
+  </div>
+
+  <div class="prompt" style="margin-top:12px">
+    <div class="prompt-header"><span class="prompt-label">📝 Geminiへのプロンプト①</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">AIを実務で活用する際の注意点や価値観、AIに依頼するのが適当なケースと逆のケースなど、実務上の注意点、ポイントを整理してください。</div>
+  </div>
+
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">📝 Geminiへのプロンプト②</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">AIの利用に関して、用途と業務プロセスを紐づけて、ポイントを整理してください
+
+・実務の前
+　調査（どんな情報が事前にあればいいかを聞いた上で調べてもらう）
+　プロセス設計（一般的な進め方・工程を出してもらう）
+　懸念点・リスクの洗い出し（何が障害になるかを聞いてみる）
+
+・実行中（前半、アウトプット前）
+　アイデア出し、ディスカッション、タスクの洗い出し
+
+・実行中（後半、アウトプット後）
+　資料の内容に関するフィードバック（抜け漏れチェック、論理的でないところ探し、構造化）
+　資料を出した時の予測反応とその対応（どんな指摘が予想されるか、その対応はどうすればいいか）
+　より伝えやすくするためのブラッシュアップ（図にする、表にする、絵にする、構造的にする、キャッチコピーを作る）</div>
+  </div>
+
+  <div class="prompt">
+    <div class="prompt-header"><span class="prompt-label">📝 Geminiへのプロンプト③</span><button class="copy-btn" onclick="copyPrompt(this)">コピー</button></div>
+    <div class="prompt-text">プロンプトのコツについて、noteやXの内容をまとめてお教えてください。</div>
+  </div>
+
+  <!-- Claudeへの指示 -->
+  <div class="h2">🤖 STEP 2〜3：Claudeへの指示の実例</div>
+  <div class="callout slate">
+    <div class="callout-head">使ったツール：Claude（claude.ai） ／ 総プロンプト回数：約70〜80回</div>
+    <div class="callout-body">
+      <p>GeminiでまとめたコンテンツをClaudeに渡し、HTML資料として構築しました。その後、完成までに<strong>約70〜80回のやりとり</strong>を重ねています。</p>
+      <p style="margin-top:8px">「一発で完成」ではなく、「出力を見て→修正を指示→また出力を確認」という対話の繰り返しが実態です。</p>
+    </div>
+  </div>
+
+  <div class="h2" style="font-size:14px;margin:16px 0 10px">実際に使ったプロンプトの例（抜粋）</div>
+
+  <div class="steps">
+    <div class="step-box s1">
+      <span class="step-badge">最初の指示</span>
+      <div>
+        <strong>「ソーシャルセクター向けの生成AI活用勉強会資料をHTMLで作ってください」</strong>
+        <span>コンテンツ・対象者・目的を伝え、HTMLの骨格を一気に作成。章構成・ナビゲーション・デザインの初期版が出力される</span>
+      </div>
+    </div>
+    <div class="step-box s2">
+      <span class="step-badge">内容の追加</span>
+      <div>
+        <strong>「以下のURLを参考に、勉強会で参考にできるポイントを抽出して、アーティファクトの内容を追加してください」</strong>
+        <span>X投稿・LayerX羅針盤・技術スライドのURLを渡し、内容を資料に組み込む。Claudeがウェブ取得→分析→挿入まで実行</span>
+      </div>
+    </div>
+    <div class="step-box s3">
+      <span class="step-badge">構成の変更</span>
+      <div>
+        <strong>「2章と3章を入れ替えてください。環境設計の全体像については5章に移動してください」</strong>
+        <span>章順の入れ替えを指示。ID・ナビ・コメント・繋ぎ文が連動して一括修正される</span>
+      </div>
+    </div>
+    <div class="step-box s1">
+      <span class="step-badge">デザイン改善</span>
+      <div>
+        <strong>「色使いを改善してください。同じ色を別の意味で使っている場合があります」</strong>
+        <span>色の意味体系を分析・再設計。teal=推奨、slate=プロセス、orange=警告など6色の役割を整合させた</span>
+      </div>
+    </div>
+    <div class="step-box s2">
+      <span class="step-badge">細部の修正</span>
+      <div>
+        <strong>「ロードマップの習熟度ボックスが崩れているので修正してください。他にも崩れているところがないかチェックをお願いします」</strong>
+        <span>特定の問題を指摘すると、全10枚のSVGを自動チェックし、問題箇所を一括修正</span>
+      </div>
+    </div>
+    <div class="step-box s3">
+      <span class="step-badge">繋がりの改善</span>
+      <div>
+        <strong>「各項目がつながるように、項目の最後に次の章への繋ぎ文を入れてください」</strong>
+        <span>「第○章へ：〜」の形式で各章末尾に繋ぎ文を追加。章の流れが自然につながるよう文章を生成</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 学べること -->
+  <div class="h2">💡 この制作プロセスから学べること</div>
+  <div class="cards">
+    <div class="card teal">
+      <h3>✅ 「型」を先に渡すと質が上がる</h3>
+      <p>最初に「対象者・目的・章構成のイメージ」を伝えることで、Claudeの出力の方向性が固まった。コンテキストが多いほど、ズレが少ない。</p>
+    </div>
+    <div class="card teal">
+      <h3>✅ 一度で完成を目指さない</h3>
+      <p>70〜80回のやりとりで完成。「まず動くものを出す→見て判断→修正を指示」のサイクルが実態。最初の出力は60点でいい。</p>
+    </div>
+    <div class="card slate">
+      <h3>🔵 人間は「判断」に集中する</h3>
+      <p>Claudeが文章・コード・デザインを生成し、人間は「これでいいか」「ここを変えたい」の判断に集中。生成は任せ、判断は手放さない。</p>
+    </div>
+    <div class="card slate">
+      <h3>🔵 ツールを使い分ける</h3>
+      <p>コンテンツ整理はGemini・HTML制作はClaudeと、目的に合わせてAIを使い分けた。どのAIでも同じではなく、得意分野がある。</p>
+    </div>
+    <div class="card amber">
+      <h3>⚠️ 確認は必ずする</h3>
+      <p>Claudeが章を入れ替えるとIDがずれることもあった。出力を盲目的に信頼せず、確認して問題を見つけ、再指示する姿勢が必要。</p>
+    </div>
+    <div class="card amber">
+      <h3>⚠️ 判断・責任は人間が持つ</h3>
+      <p>内容の正確性・倫理的な適切さ・最終公開の判断は人間が行った。AIは制作パートナーであり、意思決定者は常に人間。</p>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- まとめ -->
+<div class="section" id="sec-14">
+  <div class="sec-header"><div class="sec-num">✓</div><div class="sec-title">まとめ ─ 今日から始める！ファーストステップ</div></div>
+  <div class="sec-goals accent">
+    <div class="sec-goals-head">📌 この章で得られること</div>
+    <div class="sec-goals-body">
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>9章の学びを一枚絵として振り返れる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>今日・今週・今月・継続でやることが具体的な行動レベルで分かる</div>
+      <div class="sec-goal-item"><span class="sec-goal-icon">✅</span>勉強会を終えて「次の一歩」が明確になる</div>
+    </div>
+  </div>
+  <div class="h2">🎯 今日の学びを振り返ろう</div>
+  <div class="summary-grid">
+    <div class="summary-card"><div class="num">序</div><div class="lbl">生成AIとは何か</div><div class="txt">大量の読書で学んだ「超博識な新人」。得意・不得意を理解して使いこなす</div></div>
+    <div class="summary-card"><div class="num">1</div><div class="lbl">指示の出し方（4つのコツ）</div><div class="txt">役割・背景・形式・逆質問。この型を使えばAIの回答が劇的に変わる</div></div>
+    <div class="summary-card"><div class="num">2</div><div class="lbl">実務での活用イメージ</div><div class="txt">段取り・下書き・磨き上げの3フェーズ。仕事の流れの中にAIを組み込む</div></div>
+    <div class="summary-card"><div class="num">3</div><div class="lbl">役割分担の考え方</div><div class="txt">確実性×ミス許容度で判断。AIに任せる仕事と人間が担う仕事を整理する</div></div>
+    <div class="summary-card"><div class="num">4</div><div class="lbl">マインドセット（14項目）</div><div class="txt">A捉え方・B仕事の渡し方・C思考力を守る・D学習のスタンス。使い続ける姿勢を整える</div></div>
+    <div class="summary-card"><div class="num">5</div><div class="lbl">3つの約束</div><div class="txt">ハルシネーション注意・機密情報はNG・著作権も意識する</div></div>
+    <div class="summary-card"><div class="num">12</div><div class="lbl">エージェント型AI</div><div class="txt">チャット型の次の段階。「実行まで自動化」する進化形。動向を追い続けよう</div></div>
+  </div>
+
+  <!-- ⑤ アクションプランを行動できる粒度に -->
+  <div class="h2">🚀 明日からのアクションプラン</div>
+  <div class="action-steps">
+    <div class="action-step as1">
+      <span class="action-badge">今日</span>
+      <div class="action-content">
+        <strong>ChatGPT または Claude に無料登録する</strong>
+        <div class="action-detail">→ chatgpt.com または claude.ai を開く。メールアドレスだけで5分で完了。登録したらまず「今日の仕事でつまずいたことを教えて」と話しかけてみる</div>
+      </div>
+    </div>
+    <div class="action-step as2">
+      <span class="action-badge">今週</span>
+      <div class="action-content">
+        <strong>直近のメールや報告書の1つをAIで改善してみる</strong>
+        <div class="action-detail">→ ChatGPTを開き、下書き中のメールを貼り付けて「敬語に誤りがないか確認して」と入力。所要時間：3分。感触をつかんだら「もっと温かみのある表現に直して」と追加指示</div>
+      </div>
+    </div>
+    <div class="action-step as3">
+      <span class="action-badge">今月</span>
+      <div class="action-content">
+        <strong>「AIで作業時間が半分になった！」という体験を1つ見つける</strong>
+        <div class="action-detail">→ 候補：議事録作成 / 活動報告書の下書き / SNS投稿文の案出し。Nottaをインストールして次の会議で試すのが特におすすめ</div>
+      </div>
+    </div>
+    <div class="action-step as4">
+      <span class="action-badge">継続</span>
+      <div class="action-content">
+        <strong>うまくいったプロンプトをチームで共有する</strong>
+        <div class="action-detail">→ SlackやLINEに「AI活用メモ」チャンネルを作る。毎週1件だけ「使えた！」を投稿するルールから始めると続く</div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="h2">📚 今日の勉強会で参考にした3つの視点</div>
+  <div class="cards">
+    <div class="card amber">
+      <h3>⚡ 今が歴史的な特異点</h3>
+      <p>月額数千円で最高クラスのAIを使える状況は、原価と価格が整合していない「異常状態」かもしれない。AI競争が収束したとき価格が正常化し、AI格差が生まれる可能性がある。<strong>この異常に面白い時代を楽しめるのは今だけ。</strong></p>
+    </div>
+    <div class="card purple">
+      <h3>🎯 行動が文化をつくる</h3>
+      <p>「AIをまず試す」「成功体験をチームで共有する」「小さく試し続ける」。<strong>AIを組織に根付かせるのは、方針や研修ではなく、一人ひとりの小さな行動の積み重ねだ。</strong><br><span style="font-size:11px;color:#888">── LayerX羅針盤 ver.3.1</span></p>
+    </div>
+    <div class="card teal">
+      <h3>🔑 適材適所が本質</h3>
+      <p>LLMは目的ではなく手段の一つ。課題を「確実なもの・任せられるもの・人間が担うもの」に分類し、適材適所で使い分けること。<strong>大事なのは手段の先にある目的：何を解決したかったか。</strong><br><span style="font-size:11px;color:#888">── LayerX「LLMに何を任せ、何を任せないか」</span></p>
+    </div>
+  </div>
+
+  <div class="closing">
+    <h2>AIは「仕事を奪う敵」ではなく</h2>
+    <p>「あなたの本来やりたい仕事に集中させてくれる翼」</p>
+    <p style="margin-top:12px;font-size:13px">まずは小さな一歩から。一緒に使い倒していきましょう！</p>
+    <p style="margin-top:16px;font-size:12px;opacity:.7">ご質問・感想はチャットまたは次回の振り返りMTGでお気軽に！</p>
+  </div>
+</div>
+
+<div class="nav-btns">
+  <button class="btn btn-secondary" id="btn-prev" onclick="go(cur-1)" disabled>← 前へ</button>
+  <button class="btn btn-primary" id="btn-next" onclick="go(cur+1)">次へ →</button>
+</div>
+  <div style="text-align:center;padding:32px 0 16px;font-size:11px;color:#aaa">&copy; 今井峻介</div>
+</main>
+</div>
+
+<script>
+let cur = 0;
+const total = 15;
+
+function toggle(el) {
+  const wasOpen = el.classList.contains('open');
+  el.classList.toggle('open');
+  const btn = el.querySelector('.ms-toggle');
+  if (btn) btn.textContent = el.classList.contains('open') ? '▲ 閉じる' : '▼ 展開';
+}
+
+function copyPrompt(btn) {
+  const text = btn.closest('.prompt').querySelector('.prompt-text').textContent;
+  navigator.clipboard.writeText(text.trim()).then(() => {
+    btn.textContent = 'コピーしました ✓';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'コピー';
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text.trim();
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = 'コピーしました ✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'コピー'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+const chapterTitles = ["序章 ─ 生成AIとは何か？ ─ 仕組みと概要", "1章 ─ AIへの上手な指示の出し方", "2章 ─ 実務での活用イメージ", "3章 ─ 任せる仕事・人間がやる仕事", "4章 ─ AIと上手に付き合う", "5章 ─ 仕事で使うときの3つの約束", "6章 ─ 使えるツール紹介", "7章 ─ AI活用の環境設計", "8章 ─ ① ハードウェア環境", "9章 ─ ② 録音・文字起こし", "10章 ─ ③ コンテキスト収集・保存", "11章 ─ ④ 知識管理・AI連携", "12章 ─ エージェント型AI", "13章 ─ この資料のつくり方", "まとめ ─ 今日から始める！ファーストステップ"];
+
+function go(n) {
+  if (n < 0 || n >= total) return;
+  document.getElementById('sec-' + cur).classList.remove('active');
+  document.querySelectorAll('.nav-item')[cur].classList.remove('active');
+  // ドロワー内のnav-itemも更新
+  const drawerItems = document.querySelectorAll('.mob-nav-list .nav-item');
+  if (drawerItems[cur]) drawerItems[cur].classList.remove('active');
+  cur = n;
+  document.getElementById('sec-' + cur).classList.add('active');
+  document.querySelectorAll('.nav-item')[cur].classList.add('active');
+  if (drawerItems[cur]) drawerItems[cur].classList.add('active');
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === total - 1;
+  document.getElementById('btn-next').textContent = cur === total - 1 ? '完了 ✓' : '次へ →';
+  // 進行バー（PC）
+  const pct = Math.round((cur + 1) / total * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = (cur + 1) + ' / ' + total;
+  // モバイルヘッダー更新
+  const mobTitle = document.getElementById('mob-title');
+  if (mobTitle) mobTitle.textContent = chapterTitles[cur] || '';
+  const mobProg = document.getElementById('mob-prog-fill');
+  if (mobProg) mobProg.style.width = pct + '%';
+  const mobPrev = document.getElementById('mob-prev');
+  const mobNext = document.getElementById('mob-next');
+  if (mobPrev) mobPrev.disabled = cur === 0;
+  if (mobNext) mobNext.disabled = cur === total - 1;
+  window.scrollTo(0, 0);
+}
+
+function goMob(n) {
+  go(n);
+  closeDrawer();
+}
+
+function toggleDrawer() {
+  document.getElementById('mob-overlay').classList.toggle('open');
+}
+
+function closeDrawer() {
+  document.getElementById('mob-overlay').classList.remove('open');
+}
+</script>
+</body>
+</html>
